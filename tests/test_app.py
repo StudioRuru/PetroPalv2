@@ -6,6 +6,11 @@ from unittest.mock import patch
 
 import pytest
 
+import config
+
+# Set a test API key so URL builder doesn't return None
+config.GOOGLE_MAPS_API_KEY = "TEST_KEY"
+
 from app import app, haversine, _get_nearby_stations, _build_static_map_url
 
 

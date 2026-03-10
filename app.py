@@ -79,11 +79,13 @@ def _build_static_map_url(lat, lng, stations):
 
     # Add station markers (limit to 50 to stay within URL length)
     if stations:
-        marker_locations = "|".join(
+        marker_locations = "%7C".join(
             f"{s['lat']},{s['lng']}" for s in stations[:50]
         )
         params += f"&markers=color:red%7C{marker_locations}"
 
+    if not config.GOOGLE_MAPS_API_KEY:
+        return None
     params += f"&key={config.GOOGLE_MAPS_API_KEY}"
     return base + params
 
@@ -128,6 +130,9 @@ def api_map():
 
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
     map_url = _build_static_map_url(lat, lng, nearby)
+
+    if map_url is None:
+        return jsonify({"error": "GOOGLE_MAPS_API_KEY is not configured"}), 500
 
     if fmt == "json":
         return jsonify({"map_url": map_url})
