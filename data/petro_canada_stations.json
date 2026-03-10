@@ -1,0 +1,542 @@
+[
+  {
+    "id": "pc-001",
+    "name": "Petro-Canada - Yonge & Bloor",
+    "lat": 43.6709,
+    "lng": -79.3857,
+    "address": "2 Bloor St E, Toronto, ON M4W 1A8",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-002",
+    "name": "Petro-Canada - Lakeshore & Bathurst",
+    "lat": 43.6375,
+    "lng": -79.4003,
+    "address": "600 Lake Shore Blvd W, Toronto, ON M5V 1A5",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-003",
+    "name": "Petro-Canada - Dundas & University",
+    "lat": 43.6547,
+    "lng": -79.3882,
+    "address": "180 Dundas St W, Toronto, ON M5G 1Z8",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-004",
+    "name": "Petro-Canada - Eglinton & Yonge",
+    "lat": 43.7066,
+    "lng": -79.3986,
+    "address": "2300 Yonge St, Toronto, ON M4P 1E4",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-005",
+    "name": "Petro-Canada - St Clair & Dufferin",
+    "lat": 43.6798,
+    "lng": -79.4351,
+    "address": "1200 St Clair Ave W, Toronto, ON M6E 1B4",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-006",
+    "name": "Petro-Canada - Lawrence & Allen",
+    "lat": 43.7227,
+    "lng": -79.4467,
+    "address": "700 Lawrence Ave W, Toronto, ON M6A 1B7",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-007",
+    "name": "Petro-Canada - Danforth & Pape",
+    "lat": 43.6793,
+    "lng": -79.3449,
+    "address": "800 Danforth Ave, Toronto, ON M4J 1L5",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-008",
+    "name": "Petro-Canada - Queen & Broadview",
+    "lat": 43.6622,
+    "lng": -79.3519,
+    "address": "675 Queen St E, Toronto, ON M4M 1G9",
+    "city": "Toronto",
+    "province": "ON"
+  },
+  {
+    "id": "pc-009",
+    "name": "Petro-Canada - Kingston Rd & Victoria Park",
+    "lat": 43.6926,
+    "lng": -79.2903,
+    "address": "2900 Kingston Rd, Scarborough, ON M1M 1L7",
+    "city": "Scarborough",
+    "province": "ON"
+  },
+  {
+    "id": "pc-010",
+    "name": "Petro-Canada - Finch & Weston",
+    "lat": 43.7557,
+    "lng": -79.5180,
+    "address": "2500 Finch Ave W, North York, ON M9M 2G3",
+    "city": "North York",
+    "province": "ON"
+  },
+  {
+    "id": "pc-011",
+    "name": "Petro-Canada - Keele & Wilson",
+    "lat": 43.7316,
+    "lng": -79.4761,
+    "address": "1600 Wilson Ave, North York, ON M3L 1A5",
+    "city": "North York",
+    "province": "ON"
+  },
+  {
+    "id": "pc-012",
+    "name": "Petro-Canada - Don Mills & Sheppard",
+    "lat": 43.7619,
+    "lng": -79.3448,
+    "address": "1000 Sheppard Ave E, North York, ON M2K 1C3",
+    "city": "North York",
+    "province": "ON"
+  },
+  {
+    "id": "pc-013",
+    "name": "Petro-Canada - Markham Rd & Ellesmere",
+    "lat": 43.7600,
+    "lng": -79.2258,
+    "address": "2700 Markham Rd, Scarborough, ON M1X 1N5",
+    "city": "Scarborough",
+    "province": "ON"
+  },
+  {
+    "id": "pc-014",
+    "name": "Petro-Canada - McCowan & Steeles",
+    "lat": 43.8108,
+    "lng": -79.2548,
+    "address": "4700 Steeles Ave E, Scarborough, ON M1V 4S5",
+    "city": "Scarborough",
+    "province": "ON"
+  },
+  {
+    "id": "pc-015",
+    "name": "Petro-Canada - Warden & St Clair",
+    "lat": 43.6945,
+    "lng": -79.2991,
+    "address": "1850 St Clair Ave E, Scarborough, ON M4B 1N5",
+    "city": "Scarborough",
+    "province": "ON"
+  },
+  {
+    "id": "pc-016",
+    "name": "Petro-Canada - Islington & Bloor",
+    "lat": 43.6455,
+    "lng": -79.5243,
+    "address": "3750 Bloor St W, Etobicoke, ON M8X 1A5",
+    "city": "Etobicoke",
+    "province": "ON"
+  },
+  {
+    "id": "pc-017",
+    "name": "Petro-Canada - Kipling & Dundas",
+    "lat": 43.6277,
+    "lng": -79.5362,
+    "address": "5300 Dundas St W, Etobicoke, ON M9B 1B2",
+    "city": "Etobicoke",
+    "province": "ON"
+  },
+  {
+    "id": "pc-018",
+    "name": "Petro-Canada - Hwy 27 & Rexdale",
+    "lat": 43.7300,
+    "lng": -79.5880,
+    "address": "1700 Rexdale Blvd, Etobicoke, ON M9W 1P3",
+    "city": "Etobicoke",
+    "province": "ON"
+  },
+  {
+    "id": "pc-019",
+    "name": "Petro-Canada - Dixie & Eglinton",
+    "lat": 43.6471,
+    "lng": -79.5646,
+    "address": "3900 Eglinton Ave W, Mississauga, ON L5M 2G4",
+    "city": "Mississauga",
+    "province": "ON"
+  },
+  {
+    "id": "pc-020",
+    "name": "Petro-Canada - Hurontario & Dundas",
+    "lat": 43.5963,
+    "lng": -79.6441,
+    "address": "100 Dundas St E, Mississauga, ON L5A 1W9",
+    "city": "Mississauga",
+    "province": "ON"
+  },
+  {
+    "id": "pc-021",
+    "name": "Petro-Canada - Erin Mills & QEW",
+    "lat": 43.5571,
+    "lng": -79.6607,
+    "address": "2200 Erin Mills Pkwy, Mississauga, ON L5K 1T7",
+    "city": "Mississauga",
+    "province": "ON"
+  },
+  {
+    "id": "pc-022",
+    "name": "Petro-Canada - Mavis & Britannia",
+    "lat": 43.6086,
+    "lng": -79.6821,
+    "address": "5800 Mavis Rd, Mississauga, ON L5V 2K7",
+    "city": "Mississauga",
+    "province": "ON"
+  },
+  {
+    "id": "pc-023",
+    "name": "Petro-Canada - Yonge & Steeles",
+    "lat": 43.7979,
+    "lng": -79.4163,
+    "address": "5900 Yonge St, North York, ON M2M 3V7",
+    "city": "North York",
+    "province": "ON"
+  },
+  {
+    "id": "pc-024",
+    "name": "Petro-Canada - Hwy 7 & Warden",
+    "lat": 43.8627,
+    "lng": -79.2960,
+    "address": "7700 Warden Ave, Markham, ON L3R 0B3",
+    "city": "Markham",
+    "province": "ON"
+  },
+  {
+    "id": "pc-025",
+    "name": "Petro-Canada - Kennedy & Denison",
+    "lat": 43.8443,
+    "lng": -79.2633,
+    "address": "3400 Kennedy Rd, Markham, ON L3R 9S8",
+    "city": "Markham",
+    "province": "ON"
+  },
+  {
+    "id": "pc-026",
+    "name": "Petro-Canada - Yonge & Major Mackenzie",
+    "lat": 43.8762,
+    "lng": -79.4362,
+    "address": "10700 Yonge St, Richmond Hill, ON L4C 3E4",
+    "city": "Richmond Hill",
+    "province": "ON"
+  },
+  {
+    "id": "pc-027",
+    "name": "Petro-Canada - Bathurst & Centre",
+    "lat": 43.8560,
+    "lng": -79.4512,
+    "address": "9400 Bathurst St, Richmond Hill, ON L4C 0H4",
+    "city": "Richmond Hill",
+    "province": "ON"
+  },
+  {
+    "id": "pc-028",
+    "name": "Petro-Canada - Bayview & John",
+    "lat": 43.8644,
+    "lng": -79.3807,
+    "address": "8900 Bayview Ave, Richmond Hill, ON L4B 3V2",
+    "city": "Richmond Hill",
+    "province": "ON"
+  },
+  {
+    "id": "pc-029",
+    "name": "Petro-Canada - Davis & Yonge",
+    "lat": 43.8832,
+    "lng": -79.4324,
+    "address": "300 Davis Dr, Newmarket, ON L3Y 2N8",
+    "city": "Newmarket",
+    "province": "ON"
+  },
+  {
+    "id": "pc-030",
+    "name": "Petro-Canada - Dundas & Trafalgar",
+    "lat": 43.4397,
+    "lng": -79.7105,
+    "address": "2400 Dundas St W, Oakville, ON L6M 4J2",
+    "city": "Oakville",
+    "province": "ON"
+  },
+  {
+    "id": "pc-031",
+    "name": "Petro-Canada - QEW & Brant",
+    "lat": 43.3622,
+    "lng": -79.8075,
+    "address": "900 Brant St, Burlington, ON L7R 2J6",
+    "city": "Burlington",
+    "province": "ON"
+  },
+  {
+    "id": "pc-032",
+    "name": "Petro-Canada - Upper James & Mohawk",
+    "lat": 43.2305,
+    "lng": -79.8730,
+    "address": "600 Upper James St, Hamilton, ON L9C 2Y4",
+    "city": "Hamilton",
+    "province": "ON"
+  },
+  {
+    "id": "pc-033",
+    "name": "Petro-Canada - Main & Kenilworth",
+    "lat": 43.2392,
+    "lng": -79.8107,
+    "address": "1200 Main St E, Hamilton, ON L8K 1A3",
+    "city": "Hamilton",
+    "province": "ON"
+  },
+  {
+    "id": "pc-034",
+    "name": "Petro-Canada - Hwy 401 & Brock Rd",
+    "lat": 43.8369,
+    "lng": -79.1098,
+    "address": "400 Kingston Rd, Pickering, ON L1V 1A2",
+    "city": "Pickering",
+    "province": "ON"
+  },
+  {
+    "id": "pc-035",
+    "name": "Petro-Canada - Simcoe & King",
+    "lat": 43.8971,
+    "lng": -78.8658,
+    "address": "200 Simcoe St N, Oshawa, ON L1G 4T2",
+    "city": "Oshawa",
+    "province": "ON"
+  },
+  {
+    "id": "pc-036",
+    "name": "Petro-Canada - Rutherford & Hwy 400",
+    "lat": 43.8363,
+    "lng": -79.5297,
+    "address": "200 Rutherford Rd, Vaughan, ON L4K 1A1",
+    "city": "Vaughan",
+    "province": "ON"
+  },
+  {
+    "id": "pc-037",
+    "name": "Petro-Canada - Steeles & Hwy 50",
+    "lat": 43.7932,
+    "lng": -79.5953,
+    "address": "8100 Hwy 50, Brampton, ON L6T 0C6",
+    "city": "Brampton",
+    "province": "ON"
+  },
+  {
+    "id": "pc-038",
+    "name": "Petro-Canada - Queen & Main Brampton",
+    "lat": 43.6834,
+    "lng": -79.7593,
+    "address": "10 Main St N, Brampton, ON L6V 1N3",
+    "city": "Brampton",
+    "province": "ON"
+  },
+  {
+    "id": "pc-039",
+    "name": "Petro-Canada - Hwy 10 & Bovaird",
+    "lat": 43.7340,
+    "lng": -79.7555,
+    "address": "10200 Hurontario St, Brampton, ON L6Z 0E5",
+    "city": "Brampton",
+    "province": "ON"
+  },
+  {
+    "id": "pc-040",
+    "name": "Petro-Canada - Leslie & Elgin Mills",
+    "lat": 43.9013,
+    "lng": -79.3615,
+    "address": "10600 Leslie St, Richmond Hill, ON L4S 0B2",
+    "city": "Richmond Hill",
+    "province": "ON"
+  },
+  {
+    "id": "pc-041",
+    "name": "Petro-Canada - Rideau & King Edward",
+    "lat": 45.4285,
+    "lng": -75.6847,
+    "address": "350 Rideau St, Ottawa, ON K1N 5Y7",
+    "city": "Ottawa",
+    "province": "ON"
+  },
+  {
+    "id": "pc-042",
+    "name": "Petro-Canada - Carling & Merivale",
+    "lat": 45.3711,
+    "lng": -75.7293,
+    "address": "1600 Carling Ave, Ottawa, ON K2A 1C8",
+    "city": "Ottawa",
+    "province": "ON"
+  },
+  {
+    "id": "pc-043",
+    "name": "Petro-Canada - Bank & Hunt Club",
+    "lat": 45.3488,
+    "lng": -75.6606,
+    "address": "3100 Bank St, Ottawa, ON K1V 0R4",
+    "city": "Ottawa",
+    "province": "ON"
+  },
+  {
+    "id": "pc-044",
+    "name": "Petro-Canada - Innes & Cyrville",
+    "lat": 45.4402,
+    "lng": -75.5964,
+    "address": "1900 Innes Rd, Ottawa, ON K1B 4C5",
+    "city": "Ottawa",
+    "province": "ON"
+  },
+  {
+    "id": "pc-045",
+    "name": "Petro-Canada - Ste-Catherine & Guy",
+    "lat": 45.4925,
+    "lng": -73.5785,
+    "address": "1800 Rue Ste-Catherine O, Montreal, QC H3H 1M4",
+    "city": "Montreal",
+    "province": "QC"
+  },
+  {
+    "id": "pc-046",
+    "name": "Petro-Canada - Boulevard Décarie",
+    "lat": 45.4831,
+    "lng": -73.6318,
+    "address": "5200 Boul Décarie, Montreal, QC H3X 2H9",
+    "city": "Montreal",
+    "province": "QC"
+  },
+  {
+    "id": "pc-047",
+    "name": "Petro-Canada - Boulevard Pie-IX",
+    "lat": 45.5557,
+    "lng": -73.5837,
+    "address": "3900 Boul Pie-IX, Montreal, QC H1X 1K6",
+    "city": "Montreal",
+    "province": "QC"
+  },
+  {
+    "id": "pc-048",
+    "name": "Petro-Canada - Rue Sherbrooke E",
+    "lat": 45.5387,
+    "lng": -73.5453,
+    "address": "4200 Rue Sherbrooke E, Montreal, QC H1X 1K8",
+    "city": "Montreal",
+    "province": "QC"
+  },
+  {
+    "id": "pc-049",
+    "name": "Petro-Canada - Broadway & Cambie",
+    "lat": 49.2634,
+    "lng": -123.1139,
+    "address": "500 W Broadway, Vancouver, BC V5Z 1E9",
+    "city": "Vancouver",
+    "province": "BC"
+  },
+  {
+    "id": "pc-050",
+    "name": "Petro-Canada - Hastings & Nanaimo",
+    "lat": 49.2813,
+    "lng": -123.0563,
+    "address": "2700 E Hastings St, Vancouver, BC V5K 1Z5",
+    "city": "Vancouver",
+    "province": "BC"
+  },
+  {
+    "id": "pc-051",
+    "name": "Petro-Canada - Kingsway & Knight",
+    "lat": 49.2393,
+    "lng": -123.0752,
+    "address": "3400 Kingsway, Vancouver, BC V5R 5L1",
+    "city": "Vancouver",
+    "province": "BC"
+  },
+  {
+    "id": "pc-052",
+    "name": "Petro-Canada - Marine & Boundary",
+    "lat": 49.2076,
+    "lng": -123.0236,
+    "address": "7800 Marine Way, Burnaby, BC V5J 0E5",
+    "city": "Burnaby",
+    "province": "BC"
+  },
+  {
+    "id": "pc-053",
+    "name": "Petro-Canada - Macleod Trail & Southland",
+    "lat": 50.9880,
+    "lng": -114.0660,
+    "address": "10200 Macleod Trail SE, Calgary, AB T2J 5N3",
+    "city": "Calgary",
+    "province": "AB"
+  },
+  {
+    "id": "pc-054",
+    "name": "Petro-Canada - 16 Ave & Centre St",
+    "lat": 51.0668,
+    "lng": -114.0625,
+    "address": "200 16 Ave NW, Calgary, AB T2M 0H5",
+    "city": "Calgary",
+    "province": "AB"
+  },
+  {
+    "id": "pc-055",
+    "name": "Petro-Canada - Crowchild & Kensington",
+    "lat": 51.0534,
+    "lng": -114.0940,
+    "address": "1800 Crowchild Trail NW, Calgary, AB T2M 3Y7",
+    "city": "Calgary",
+    "province": "AB"
+  },
+  {
+    "id": "pc-056",
+    "name": "Petro-Canada - Deerfoot & McKnight",
+    "lat": 51.1007,
+    "lng": -114.0224,
+    "address": "5300 McKnight Blvd NE, Calgary, AB T2E 7G1",
+    "city": "Calgary",
+    "province": "AB"
+  },
+  {
+    "id": "pc-057",
+    "name": "Petro-Canada - Jasper Ave & 109 St",
+    "lat": 53.5402,
+    "lng": -113.5219,
+    "address": "10900 Jasper Ave, Edmonton, AB T5J 1P7",
+    "city": "Edmonton",
+    "province": "AB"
+  },
+  {
+    "id": "pc-058",
+    "name": "Petro-Canada - Whyte Ave & Calgary Trail",
+    "lat": 53.5184,
+    "lng": -113.4968,
+    "address": "7700 104 St NW, Edmonton, AB T6E 4C6",
+    "city": "Edmonton",
+    "province": "AB"
+  },
+  {
+    "id": "pc-059",
+    "name": "Petro-Canada - 137 Ave & 97 St",
+    "lat": 53.6092,
+    "lng": -113.4940,
+    "address": "9700 137 Ave NW, Edmonton, AB T5E 5R8",
+    "city": "Edmonton",
+    "province": "AB"
+  },
+  {
+    "id": "pc-060",
+    "name": "Petro-Canada - Baseline & Woodroffe",
+    "lat": 45.3500,
+    "lng": -75.7614,
+    "address": "2000 Baseline Rd, Ottawa, ON K2C 0C6",
+    "city": "Ottawa",
+    "province": "ON"
+  }
+]

@@ -1,0 +1,134 @@
+{
+  "_comment": "PetroPal Widgy Widget Template - Import this into Widgy app on iOS",
+  "widget_type": "large",
+  "name": "PetroPal - Gas Stations & Prices",
+  "layers": [
+    {
+      "type": "rectangle",
+      "name": "Background",
+      "position": {"x": 0, "y": 0, "width": 364, "height": 170},
+      "style": {
+        "background_color": "#1C1C1E",
+        "corner_radius": 16
+      }
+    },
+    {
+      "type": "image",
+      "name": "Station Map",
+      "position": {"x": 4, "y": 4, "width": 356, "height": 126},
+      "data_source": {
+        "type": "web_url",
+        "url": "YOUR_SERVER_URL/api/map?lat={{location.latitude}}&lng={{location.longitude}}&format=redirect",
+        "cache_policy": "no_cache"
+      },
+      "style": {
+        "corner_radius": 12
+      },
+      "tap_action": {
+        "type": "open_url",
+        "url": "https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},13z"
+      }
+    },
+    {
+      "type": "symbol",
+      "name": "Gas Icon",
+      "position": {"x": 8, "y": 134, "width": 16, "height": 16},
+      "sf_symbol": "fuelpump.fill",
+      "style": {
+        "tint_color": "#FF9500"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Tomorrow Label",
+      "position": {"x": 28, "y": 132, "width": 70, "height": 18},
+      "text": "Tomorrow:",
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "regular",
+        "font_size": 11,
+        "text_color": "#8E8E93"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Gas Price",
+      "position": {"x": 96, "y": 132, "width": 80, "height": 18},
+      "data_source": {
+        "type": "json_api",
+        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
+        "json_path": "gas_price.display"
+      },
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "bold",
+        "font_size": 13,
+        "text_color": "#FFFFFF"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Price Change",
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
+      "data_source": {
+        "type": "json_api",
+        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
+        "json_path": "gas_price.change_display"
+      },
+      "style": {
+        "font": "SF Pro Mono",
+        "font_weight": "semibold",
+        "font_size": 12,
+        "text_color_source": {
+          "type": "json_api",
+          "json_path": "gas_price.color"
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "name": "Pin Icon",
+      "position": {"x": 8, "y": 152, "width": 16, "height": 16},
+      "sf_symbol": "mappin.circle.fill",
+      "style": {
+        "tint_color": "#FF3B30"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Nearest Station",
+      "position": {"x": 28, "y": 150, "width": 240, "height": 18},
+      "data_source": {
+        "type": "json_api",
+        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
+        "json_path": "stations.nearest"
+      },
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "regular",
+        "font_size": 11,
+        "text_color": "#AEAEB2"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Station Count",
+      "position": {"x": 290, "y": 150, "width": 70, "height": 18},
+      "data_source": {
+        "type": "json_api",
+        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
+        "json_path": "stations.count"
+      },
+      "text_suffix": " nearby",
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "regular",
+        "font_size": 11,
+        "text_color": "#8E8E93",
+        "text_alignment": "right"
+      }
+    }
+  ],
+  "refresh_interval": 900,
+  "setup_notes": "Replace YOUR_SERVER_URL with your deployed PetroPal API URL"
+}
