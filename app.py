@@ -4,7 +4,8 @@ import json
 import math
 from datetime import datetime, timezone
 
-from flask import Flask, jsonify, redirect, request
+import requests as http_requests
+from flask import Flask, Response, jsonify, redirect, request
 from flask_cors import CORS
 
 import config
@@ -138,6 +139,34 @@ def api_map():
     if fmt == "json":
         return jsonify({"map_url": map_url})
     return redirect(map_url, code=302)
+
+
+@app.route("/api/map-image")
+def api_map_image():
+    """Proxy the Google Static Map image and serve PNG bytes directly.
+
+    This avoids CORS and redirect issues when loading the map in Widgy's
+    JavaScript image layer.
+    """
+    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
+    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+
+    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
+    top_stations = nearby[: config.MAX_MAP_STATIONS]
+    map_url = _build_static_map_url(lat, lng, top_stations)
+
+    if map_url is None:
+        return jsonify({"error": "GOOGLE_MAPS_API_KEY is not configured"}), 500
+
+    resp = http_requests.get(map_url, timeout=10)
+    if resp.status_code != 200:
+        return jsonify({"error": "Failed to fetch map image"}), 502
+
+    return Response(
+        resp.content,
+        content_type=resp.headers.get("Content-Type", "image/png"),
+        headers={"Cache-Control": "public, max-age=300"},
+    )
 
 
 @app.route("/api/gas-price")

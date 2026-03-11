@@ -122,11 +122,18 @@ String(data.stations.count);
 
 
 // ============================
-// SNIPPET 5: Map Image URL
+// SNIPPET 5: Map Image
 // ============================
 // Layer: "Station Map" IMAGE layer (not text)
 // In Widgy: use JavaScript data source on the image layer
-// This returns the map image URL that Widgy will load
+//
+// This fetches the map as PNG from /api/map-image (which proxies Google
+// Static Maps), converts it to a base64 data URL, and returns it.
+//
+// ALTERNATIVE: If this JS doesn't work in Widgy's sandbox, use the
+// URL data source instead and enter this URL directly:
+//   YOUR_SERVER_URL/api/map-image
+// (optionally with ?lat=XX&lng=YY for a fixed location)
 
 async function getLocation() {
   return new Promise((resolve, reject) => {
@@ -141,7 +148,11 @@ async function getLocation() {
   });
 }
 const loc = await getLocation();
-`YOUR_SERVER_URL/api/map?lat=${loc.lat}&lng=${loc.lng}&format=redirect`;
+const resp = await fetch(`YOUR_SERVER_URL/api/map-image?lat=${loc.lat}&lng=${loc.lng}`);
+const blob = await resp.blob();
+const reader = new FileReader();
+await new Promise(r => { reader.onloadend = () => r(); reader.readAsDataURL(blob); });
+reader.result;
 
 
 // =============================================================================

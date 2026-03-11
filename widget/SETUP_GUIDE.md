@@ -26,6 +26,28 @@
 
 ## Step 3: Add the Map Image Layer
 
+The API has a `/api/map-image` endpoint that serves the map as raw PNG bytes
+(no redirects, no CORS issues). There are two ways to set this up:
+
+### Option A: URL Data Source (simplest -- uses server default location)
+
+1. Tap **"+"** > select **Image**
+2. Set position: x=4, y=4, width=356, height=126
+3. Corner radius: **12**
+4. Tap the **cube icon** to set the data source
+5. Choose **URL** as the data source type
+6. Enter this URL:
+   ```
+   YOUR_SERVER_URL/api/map-image
+   ```
+7. **Replace `YOUR_SERVER_URL`** with your actual API URL
+   (e.g., `https://petropalv2-production.up.railway.app/api/map-image`)
+8. Tap **RUN** -- you should see the map image appear
+
+> This uses the server's default location (Toronto). For GPS-based maps, use Option B.
+
+### Option B: JavaScript Data Source (uses your phone's GPS)
+
 1. Tap **"+"** > select **Image**
 2. Set position: x=4, y=4, width=356, height=126
 3. Corner radius: **12**
@@ -47,14 +69,20 @@ async function getLocation() {
   });
 }
 const loc = await getLocation();
-`YOUR_SERVER_URL/api/map?lat=${loc.lat}&lng=${loc.lng}&format=redirect`;
+const resp = await fetch(`YOUR_SERVER_URL/api/map-image?lat=${loc.lat}&lng=${loc.lng}`);
+const blob = await resp.blob();
+const reader = new FileReader();
+await new Promise(r => { reader.onloadend = () => r(); reader.readAsDataURL(blob); });
+reader.result;
 ```
 
 7. **Replace `YOUR_SERVER_URL`** with your actual API URL
-8. Tap **RUN** to test -- you should see a map URL returned
+8. Tap **RUN** to test -- you should see a base64 image string returned
 
-> **If `navigator.geolocation` doesn't work:** Replace the `getLocation()` call with your home coordinates:
-> `const loc = { lat: 43.6532, lng: -79.3832 };`
+> **If the JavaScript approach doesn't work** (e.g., `FileReader` or `blob()` not
+> available in Widgy's sandbox), use **Option A** instead. You can hardcode your
+> coordinates in the URL:
+> `YOUR_SERVER_URL/api/map-image?lat=43.6532&lng=-79.3832`
 
 ---
 
