@@ -1,50 +1,29 @@
 // =============================================================================
 // PetroPal - Widgy JavaScript Snippets
 // =============================================================================
-// Each snippet below goes into a SEPARATE text layer's JavaScript editor.
-// In Widgy: select a text layer > tap cube icon > choose "JavaScript" > paste.
+// Each snippet below is SELF-CONTAINED. Paste it into the relevant layer.
 //
-// IMPORTANT: Replace YOUR_SERVER_URL with your actual deployed URL, e.g.:
-//   https://petropalv2-production.up.railway.app
+// TEXT LAYERS:  Use "javascript[async + no main()]" mode
+// IMAGE LAYERS: Choose either "JavaScript" (main) or "javascript[async + no main()]"
+//
+// IMPORTANT: Replace these placeholders before pasting:
+//   YOUR_SERVER_URL → your deployed API (e.g., https://petropalv2-production.up.railway.app)
+//   YOUR_LAT        → your latitude  (e.g., 43.6532)
+//   YOUR_LNG        → your longitude (e.g., -79.3832)
+//
+// NOTE: navigator.geolocation is NOT available in Widgy's JS sandbox.
+// For dynamic GPS-based location, use the iOS Shortcuts approach at the
+// bottom of this file.
 // =============================================================================
-
-
-// ------------------------------------
-// HELPER: Shared fetch function
-// ------------------------------------
-// This async function gets the user's location and calls the PetroPal API.
-// It is included at the top of each snippet so every layer is self-contained.
-//
-// How it works:
-//   1. Uses navigator.geolocation to get the phone's GPS coordinates
-//   2. Passes lat/lng to your PetroPal API
-//   3. Returns the full JSON response
-//
-// If navigator.geolocation is NOT available in Widgy's JS sandbox,
-// see the "FALLBACK" section at the bottom of this file.
-// ------------------------------------
 
 
 // =====================
 // SNIPPET 1: Gas Price
 // =====================
-// Layer: "Gas Price" text layer
+// Layer: Text  |  Mode: javascript[async + no main()]
 // Expected output: "160.9 c/L"
 
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve({ lat: 43.6532, lng: -79.3832 })
-      );
-    } else {
-      resolve({ lat: 43.6532, lng: -79.3832 });
-    }
-  });
-}
-const loc = await getLocation();
-const resp = await fetch(`YOUR_SERVER_URL/api/widget-data?lat=${loc.lat}&lng=${loc.lng}`);
+const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
 const data = await resp.json();
 data.gas_price.display;
 
@@ -52,23 +31,10 @@ data.gas_price.display;
 // ===========================
 // SNIPPET 2: Price Change
 // ===========================
-// Layer: "Price Change" text layer
+// Layer: Text  |  Mode: javascript[async + no main()]
 // Expected output: "+2.0c"
 
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve({ lat: 43.6532, lng: -79.3832 })
-      );
-    } else {
-      resolve({ lat: 43.6532, lng: -79.3832 });
-    }
-  });
-}
-const loc = await getLocation();
-const resp = await fetch(`YOUR_SERVER_URL/api/widget-data?lat=${loc.lat}&lng=${loc.lng}`);
+const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
 const data = await resp.json();
 data.gas_price.change_display;
 
@@ -76,47 +42,21 @@ data.gas_price.change_display;
 // ==============================
 // SNIPPET 3: Nearest Station
 // ==============================
-// Layer: "Nearest Station" text layer
+// Layer: Text  |  Mode: javascript[async + no main()]
 // Expected output: "Petro-Canada - Yonge & Bloor (0.3 km)"
 
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve({ lat: 43.6532, lng: -79.3832 })
-      );
-    } else {
-      resolve({ lat: 43.6532, lng: -79.3832 });
-    }
-  });
-}
-const loc = await getLocation();
-const resp = await fetch(`YOUR_SERVER_URL/api/widget-data?lat=${loc.lat}&lng=${loc.lng}`);
+const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
 const data = await resp.json();
-data.stations.nearest || "No stations nearby";
+data.stations.nearest || 'No stations nearby';
 
 
 // ============================
 // SNIPPET 4: Station Count
 // ============================
-// Layer: "Station Count" text layer
-// Expected output: "8" (Widgy appends " nearby" via text_suffix if configured)
+// Layer: Text  |  Mode: javascript[async + no main()]
+// Expected output: "8"
 
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve({ lat: 43.6532, lng: -79.3832 })
-      );
-    } else {
-      resolve({ lat: 43.6532, lng: -79.3832 });
-    }
-  });
-}
-const loc = await getLocation();
-const resp = await fetch(`YOUR_SERVER_URL/api/widget-data?lat=${loc.lat}&lng=${loc.lng}`);
+const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
 const data = await resp.json();
 String(data.stations.count);
 
@@ -124,50 +64,77 @@ String(data.stations.count);
 // ============================
 // SNIPPET 5: Map Image
 // ============================
-// Layer: "Station Map" IMAGE layer (not text)
-// In Widgy: Image > Web and Maps > JavaScript
+// Layer: Image  |  Go to: Image > Web and Maps > JavaScript
 //
-// Widgy's image JS expects a main() function that returns an image URL.
-// The /api/map-image endpoint serves raw PNG bytes, so Widgy can load
-// it directly as an image source.
-//
-// NOTE: navigator.geolocation is NOT available in Widgy's JS sandbox,
-// so we hardcode coordinates. Replace with your own lat/lng.
+// The /api/map-image endpoint serves raw PNG bytes (no redirects).
+// Choose ONE of the two options below depending on which JS mode you pick.
+
+// --- OPTION A: "JavaScript" mode (uses main() function) ---
 
 var main = function() {
     return 'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
 }
 
+// --- OPTION B: "javascript[async + no main()]" mode ---
+
+'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
+
 
 // =============================================================================
-// FALLBACK: If navigator.geolocation does NOT work in Widgy
+// GPS-BASED LOCATION VIA iOS SHORTCUTS (recommended)
 // =============================================================================
-// If geolocation is unavailable in Widgy's JavaScript sandbox, use one of
-// these alternative approaches:
+// Since navigator.geolocation is NOT available in Widgy's JS sandbox,
+// use an iOS Shortcut to inject your GPS coordinates automatically.
 //
-// OPTION A: Use the JSON endpoint data source (no location, uses server default)
-//   - Select "JSON endpoint" instead of "JavaScript"
-//   - URL: YOUR_SERVER_URL/api/widget-data
-//   - json_path: gas_price.display (or whichever field)
-//   - This uses Toronto as the default location
+// --- Shortcut: "PetroPal Refresh" ---
 //
-// OPTION B: iOS Shortcuts integration (recommended if geolocation fails)
-//   1. Create an iOS Shortcut called "PetroPal Refresh":
-//      - Action 1: "Get Current Location"
-//      - Action 2: "Get Contents of URL"
-//        URL: YOUR_SERVER_URL/api/widget-data?lat=[Latitude]&lng=[Longitude]
-//      - Action 3: "Save File" to iCloud Drive/Widgy/petropal.json
-//   2. In Widgy, use the "Files" data source on each text layer:
-//      - File: iCloud Drive/Widgy/petropal.json
-//      - json_path: gas_price.display (etc.)
-//   3. Set up iOS Automation to run the Shortcut every hour, or
-//      add a Tap Action layer that runs the Shortcut on tap.
+// Build this Shortcut in the iOS Shortcuts app:
 //
-// OPTION C: Hardcode your home location (simplest fallback)
-//   Replace the getLocation() function in each snippet with:
+//   1. "Get Current Location"
+//      → This gets your phone's GPS coordinates
 //
-//   const loc = { lat: YOUR_LAT, lng: YOUR_LNG };
+//   2. "Get Contents of URL"
+//      → Method: GET
+//      → URL: YOUR_SERVER_URL/api/widget-data?lat=[Latitude]&lng=[Longitude]
+//        (Use "Select Variable" > "Current Location" > "Latitude" / "Longitude"
+//         from step 1 to insert the magic variables)
 //
-//   Example for downtown Toronto:
-//   const loc = { lat: 43.6532, lng: -79.3832 };
+//   3. "Save File"
+//      → Save the response to: iCloud Drive/Widgy/petropal.json
+//      → Toggle OFF "Ask Where to Save"
+//
+//   4. (Optional) "Get Contents of URL"
+//      → URL: YOUR_SERVER_URL/api/map-image?lat=[Latitude]&lng=[Longitude]
+//      → This downloads the map image
+//
+//   5. (Optional) "Save File"
+//      → Save to: iCloud Drive/Widgy/petropal_map.png
+//      → Toggle OFF "Ask Where to Save"
+//
+// --- Automate it ---
+//
+//   • Go to Shortcuts > Automation > "+" > Personal Automation
+//   • Trigger: "Time of Day" → set to repeat every 1 hour
+//   • Action: "Run Shortcut" → select "PetroPal Refresh"
+//   • Toggle OFF "Ask Before Running"
+//
+// --- Use in Widgy ---
+//
+//   For TEXT layers (price, station, etc.):
+//     • Data source: "Files"
+//     • File: iCloud Drive/Widgy/petropal.json
+//     • JSON path: gas_price.display (or change_display, stations.nearest, etc.)
+//
+//   For the MAP image layer:
+//     • Data source: Image > Web and Maps > URL
+//     • File: iCloud Drive/Widgy/petropal_map.png
+//     (Or keep using the JavaScript approach above with hardcoded coordinates
+//      as a simpler alternative)
+//
+// --- Trigger from widget ---
+//
+//   Add a "Tap Action" layer over the refresh icon:
+//     • Tap Action type: "Run Shortcut"
+//     • Select "PetroPal Refresh"
+//   This lets you manually refresh location + data by tapping the widget.
 // =============================================================================
