@@ -347,9 +347,10 @@ def api_widget_data():
 
     # Color-split fields: only the active trend gets text, others are empty.
     # This lets Widgy stack 3 text layers (red/green/gray) with static colors.
-    change_red = change_display if trend == "up" else ""
-    change_green = change_display if trend == "down" else ""
-    change_gray = change_display if trend == "stable" else ""
+    # Use a space (not empty string) for inactive fields — Widgy renders "" as a dash.
+    change_red = change_display if trend == "up" else " "
+    change_green = change_display if trend == "down" else " "
+    change_gray = change_display if trend == "stable" else " "
 
     return jsonify(
         {
