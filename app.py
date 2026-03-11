@@ -102,20 +102,22 @@ def _build_static_map_url(lat, lng, stations):
         f"&markers=color:blue%7Clabel:U%7C{lat},{lng}"
     )
 
-    # Dark mode styling
+    # High-contrast dark mode styling for widget readability
     params += (
-        "&style=element:geometry%7Ccolor:0x242f3e"
-        "&style=element:labels.text.stroke%7Ccolor:0x242f3e"
-        "&style=element:labels.text.fill%7Ccolor:0x746855"
-        "&style=feature:administrative.locality%7Celement:labels.text.fill%7Ccolor:0xd59563"
-        "&style=feature:road%7Celement:geometry%7Ccolor:0x38414e"
-        "&style=feature:road%7Celement:geometry.stroke%7Ccolor:0x212a37"
-        "&style=feature:road%7Celement:labels.text.fill%7Ccolor:0x9ca5b3"
-        "&style=feature:road.highway%7Celement:geometry%7Ccolor:0x746855"
-        "&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0x1f2835"
-        "&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0xf3d19c"
-        "&style=feature:water%7Celement:geometry%7Ccolor:0x17263c"
-        "&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x515c6d"
+        "&style=element:geometry%7Ccolor:0x1a1a2e"
+        "&style=element:labels.text.fill%7Ccolor:0xffffff"
+        "&style=element:labels.text.stroke%7Ccolor:0x1a1a2e"
+        "&style=feature:administrative.locality%7Celement:labels.text.fill%7Ccolor:0xffffff"
+        "&style=feature:road%7Celement:geometry%7Ccolor:0xe0e0e0"
+        "&style=feature:road%7Celement:geometry.stroke%7Ccolor:0x1a1a2e"
+        "&style=feature:road%7Celement:labels.text.fill%7Ccolor:0xffffff"
+        "&style=feature:road.highway%7Celement:geometry%7Ccolor:0xf0c040"
+        "&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0xc49a30"
+        "&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0xffffff"
+        "&style=feature:water%7Celement:geometry%7Ccolor:0x0d47a1"
+        "&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x90caf9"
+        "&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x90caf9"
+        "&style=feature:transit%7Celement:geometry%7Ccolor:0x2a2a4e"
     )
 
     # Add station markers (limit to 50 to stay within URL length)
