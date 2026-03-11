@@ -1,5 +1,5 @@
 {
-  "_comment": "PetroPal Widgy Widget Template - Import this into Widgy app on iOS",
+  "_comment": "PetroPal Widgy Widget - Reference template and setup guide",
   "widget_type": "large",
   "name": "PetroPal - Gas Stations & Prices",
   "layers": [
@@ -15,18 +15,14 @@
     {
       "type": "image",
       "name": "Station Map",
+      "_comment": "Use JavaScript data source (see setup step 3). Cannot use JSON endpoint for images with dynamic location.",
       "position": {"x": 4, "y": 4, "width": 356, "height": 126},
       "data_source": {
-        "type": "web_url",
-        "url": "YOUR_SERVER_URL/api/map?lat={{location.latitude}}&lng={{location.longitude}}&format=redirect",
-        "cache_policy": "no_cache"
+        "type": "javascript",
+        "code": "See setup step 3 - paste the Map JavaScript into this layer's JS editor"
       },
       "style": {
         "corner_radius": 12
-      },
-      "tap_action": {
-        "type": "open_url",
-        "url": "https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},14z"
       }
     },
     {
@@ -53,11 +49,11 @@
     {
       "type": "text",
       "name": "Gas Price",
+      "_comment": "Use JavaScript data source (see setup step 4)",
       "position": {"x": 96, "y": 132, "width": 80, "height": 18},
       "data_source": {
-        "type": "json_api",
-        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
-        "json_path": "gas_price.display"
+        "type": "javascript",
+        "code": "See setup step 4 - paste the Gas Price JavaScript"
       },
       "style": {
         "font": "SF Pro",
@@ -69,20 +65,17 @@
     {
       "type": "text",
       "name": "Price Change",
+      "_comment": "Use JavaScript data source (see setup step 4)",
       "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
-        "type": "json_api",
-        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
-        "json_path": "gas_price.change_display"
+        "type": "javascript",
+        "code": "See setup step 4 - paste the Price Change JavaScript"
       },
       "style": {
         "font": "SF Pro Mono",
         "font_weight": "semibold",
         "font_size": 12,
-        "text_color_source": {
-          "type": "json_api",
-          "json_path": "gas_price.color"
-        }
+        "text_color": "#FFFFFF"
       }
     },
     {
@@ -97,11 +90,11 @@
     {
       "type": "text",
       "name": "Nearest Station",
+      "_comment": "Use JavaScript data source (see setup step 4)",
       "position": {"x": 28, "y": 150, "width": 240, "height": 18},
       "data_source": {
-        "type": "json_api",
-        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
-        "json_path": "stations.nearest"
+        "type": "javascript",
+        "code": "See setup step 4 - paste the Nearest Station JavaScript"
       },
       "style": {
         "font": "SF Pro",
@@ -113,11 +106,11 @@
     {
       "type": "text",
       "name": "Station Count",
+      "_comment": "Use JavaScript data source (see setup step 4)",
       "position": {"x": 260, "y": 150, "width": 70, "height": 18},
       "data_source": {
-        "type": "json_api",
-        "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
-        "json_path": "stations.count"
+        "type": "javascript",
+        "code": "See setup step 4 - paste the Station Count JavaScript"
       },
       "text_suffix": " nearby",
       "style": {
@@ -130,51 +123,32 @@
     },
     {
       "type": "symbol",
-      "name": "Refresh Button",
+      "name": "Refresh Icon",
+      "_comment": "Visual only - the actual tap action is a separate Tap Action layer overlaid on this icon (see setup step 5)",
       "position": {"x": 336, "y": 134, "width": 22, "height": 22},
       "sf_symbol": "arrow.clockwise.circle.fill",
       "style": {
         "tint_color": "#48484A"
-      },
-      "tap_action": {
-        "type": "refresh"
+      }
+    },
+    {
+      "type": "tap_action",
+      "name": "Refresh Tap Area",
+      "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon, set action to 'Reload Widget'",
+      "position": {"x": 330, "y": 128, "width": 34, "height": 34},
+      "action": "reload_widget"
+    },
+    {
+      "type": "tap_action",
+      "name": "Map Tap Area",
+      "_comment": "In Widgy: add a Tap Action layer, position it over the map, set action to 'External Action > Open URL'",
+      "position": {"x": 4, "y": 4, "width": 356, "height": 126},
+      "action": {
+        "type": "open_url",
+        "url": "https://www.google.com/maps/search/Petro-Canada/",
+        "_comment": "This opens Google Maps searching for Petro-Canada near the user's current location"
       }
     }
   ],
-  "refresh_interval": 900,
-  "setup_notes": [
-    "=== PetroPal Widget Setup Guide ===",
-    "",
-    "1. REPLACE YOUR_SERVER_URL:",
-    "   Change every 'YOUR_SERVER_URL' to your deployed PetroPal API URL.",
-    "   Example: https://petropalv2-production.up.railway.app",
-    "",
-    "2. LOCATION-BASED (automatic):",
-    "   The widget uses {{location.latitude}} and {{location.longitude}} which",
-    "   Widgy replaces with your phone's real GPS coordinates on every refresh.",
-    "   Make sure Widgy has Location permission: Settings > Widgy > Location > Always.",
-    "",
-    "3. MAP SHOWS 3 NEAREST STATIONS:",
-    "   The map displays a blue 'U' marker for your location and up to 3 red",
-    "   markers for the nearest Petro-Canada stations within 10 km.",
-    "   Tap the map to open Google Maps and see all nearby Petro-Canada stations.",
-    "",
-    "4. REFRESH BEHAVIOR:",
-    "   - Auto-refresh: Every 15 minutes (iOS widget limitation).",
-    "   - Manual refresh: Tap the circular arrow icon (bottom-right corner)",
-    "     to force an immediate refresh of location, map, and prices.",
-    "",
-    "5. DATA LAYERS (all use JSON endpoint data source):",
-    "   - Gas Price:      json_path = gas_price.display        (e.g. '160.9 c/L')",
-    "   - Price Change:   json_path = gas_price.change_display  (e.g. '+2.0c')",
-    "   - Nearest Station: json_path = stations.nearest         (e.g. 'Petro-Canada - Yonge & Bloor (0.3 km)')",
-    "   - Station Count:  json_path = stations.count            (e.g. '8')",
-    "",
-    "6. API RESPONSE (stations.top) - available for advanced use:",
-    "   The API returns the 3 nearest stations as an array at stations.top[].",
-    "   Each entry has: name, distance_km, display, nav_url.",
-    "   You can create additional text layers to show station #2 and #3:",
-    "   - 2nd station: json_path = stations.top[1].display",
-    "   - 3rd station: json_path = stations.top[2].display"
-  ]
+  "refresh_interval": 900
 }
