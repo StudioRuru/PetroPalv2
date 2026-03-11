@@ -64,18 +64,50 @@
     },
     {
       "type": "text",
-      "name": "Price Change",
-      "_comment": "Use JavaScript data source (see setup step 4)",
+      "name": "Price Change (Red - Up)",
+      "_comment": "Shows change only when price is going UP. Stack all 3 change layers at same position.",
       "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
-        "type": "javascript",
-        "code": "See setup step 4 - paste the Price Change JavaScript"
+        "type": "endpoint",
+        "field": "gas_price.change_red"
       },
       "style": {
         "font": "SF Pro Mono",
         "font_weight": "semibold",
         "font_size": 12,
-        "text_color": "#FFFFFF"
+        "text_color": "#FF3B30"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Price Change (Green - Down)",
+      "_comment": "Shows change only when price is going DOWN.",
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "gas_price.change_green"
+      },
+      "style": {
+        "font": "SF Pro Mono",
+        "font_weight": "semibold",
+        "font_size": 12,
+        "text_color": "#34C759"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Price Change (Gray - Stable)",
+      "_comment": "Shows change only when price is STABLE.",
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "gas_price.change_gray"
+      },
+      "style": {
+        "font": "SF Pro Mono",
+        "font_weight": "semibold",
+        "font_size": 12,
+        "text_color": "#8E8E93"
       }
     },
     {

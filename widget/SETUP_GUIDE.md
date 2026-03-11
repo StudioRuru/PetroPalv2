@@ -118,11 +118,27 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 - Color: **#FFFFFF** (white)
 - Endpoint field: **`gas_price.display`** (shows "152.9 c/L")
 
-### Price Change
+### Price Change (3 stacked layers — red / green / gray)
+
+Create **three text layers** at the **same position**. Only one will have text at a time; the others will be empty. This gives you dynamic color without JavaScript.
+
+**Layer A — Price Up (red)**
 - Position: x=176, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
-- Color: **#FFFFFF**
-- Endpoint field: **`gas_price.change_display`** (shows "-8.0c")
+- Color: **#FF3B30** (red)
+- Endpoint field: **`gas_price.change_red`** (shows "+2.0c" only when price goes up)
+
+**Layer B — Price Down (green)**
+- Position: x=176, y=132, width=50, height=18
+- Font: SF Pro Mono, Semibold, size 12
+- Color: **#34C759** (green)
+- Endpoint field: **`gas_price.change_green`** (shows "-8.0c" only when price goes down)
+
+**Layer C — Stable (gray)**
+- Position: x=176, y=132, width=50, height=18
+- Font: SF Pro Mono, Semibold, size 12
+- Color: **#8E8E93** (gray)
+- Endpoint field: **`gas_price.change_gray`** (shows "0.0c" only when price is stable)
 
 ### Pin Icon (SF Symbol)
 - Tap **"+"** > select **Symbol**

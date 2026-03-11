@@ -345,6 +345,12 @@ def api_widget_data():
     else:
         date_short = date_raw
 
+    # Color-split fields: only the active trend gets text, others are empty.
+    # This lets Widgy stack 3 text layers (red/green/gray) with static colors.
+    change_red = change_display if trend == "up" else ""
+    change_green = change_display if trend == "down" else ""
+    change_gray = change_display if trend == "stable" else ""
+
     return jsonify(
         {
             "map_url": map_url,
@@ -353,6 +359,9 @@ def api_widget_data():
                 "display": display,
                 "change": str(change) if change is not None else None,
                 "change_display": change_display,
+                "change_red": change_red,
+                "change_green": change_green,
+                "change_gray": change_gray,
                 "trend": trend,
                 "color": _trend_color(trend),
                 "date": date_short,
