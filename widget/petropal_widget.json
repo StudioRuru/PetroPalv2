@@ -26,7 +26,7 @@
       },
       "tap_action": {
         "type": "open_url",
-        "url": "https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},13z"
+        "url": "https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},14z"
       }
     },
     {
@@ -113,7 +113,7 @@
     {
       "type": "text",
       "name": "Station Count",
-      "position": {"x": 290, "y": 150, "width": 70, "height": 18},
+      "position": {"x": 260, "y": 150, "width": 70, "height": 18},
       "data_source": {
         "type": "json_api",
         "url": "YOUR_SERVER_URL/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}",
@@ -127,8 +127,54 @@
         "text_color": "#8E8E93",
         "text_alignment": "right"
       }
+    },
+    {
+      "type": "symbol",
+      "name": "Refresh Button",
+      "position": {"x": 336, "y": 134, "width": 22, "height": 22},
+      "sf_symbol": "arrow.clockwise.circle.fill",
+      "style": {
+        "tint_color": "#48484A"
+      },
+      "tap_action": {
+        "type": "refresh"
+      }
     }
   ],
   "refresh_interval": 900,
-  "setup_notes": "Replace YOUR_SERVER_URL with your deployed PetroPal API URL"
+  "setup_notes": [
+    "=== PetroPal Widget Setup Guide ===",
+    "",
+    "1. REPLACE YOUR_SERVER_URL:",
+    "   Change every 'YOUR_SERVER_URL' to your deployed PetroPal API URL.",
+    "   Example: https://petropalv2-production.up.railway.app",
+    "",
+    "2. LOCATION-BASED (automatic):",
+    "   The widget uses {{location.latitude}} and {{location.longitude}} which",
+    "   Widgy replaces with your phone's real GPS coordinates on every refresh.",
+    "   Make sure Widgy has Location permission: Settings > Widgy > Location > Always.",
+    "",
+    "3. MAP SHOWS 3 NEAREST STATIONS:",
+    "   The map displays a blue 'U' marker for your location and up to 3 red",
+    "   markers for the nearest Petro-Canada stations within 10 km.",
+    "   Tap the map to open Google Maps and see all nearby Petro-Canada stations.",
+    "",
+    "4. REFRESH BEHAVIOR:",
+    "   - Auto-refresh: Every 15 minutes (iOS widget limitation).",
+    "   - Manual refresh: Tap the circular arrow icon (bottom-right corner)",
+    "     to force an immediate refresh of location, map, and prices.",
+    "",
+    "5. DATA LAYERS (all use JSON endpoint data source):",
+    "   - Gas Price:      json_path = gas_price.display        (e.g. '160.9 c/L')",
+    "   - Price Change:   json_path = gas_price.change_display  (e.g. '+2.0c')",
+    "   - Nearest Station: json_path = stations.nearest         (e.g. 'Petro-Canada - Yonge & Bloor (0.3 km)')",
+    "   - Station Count:  json_path = stations.count            (e.g. '8')",
+    "",
+    "6. API RESPONSE (stations.top) - available for advanced use:",
+    "   The API returns the 3 nearest stations as an array at stations.top[].",
+    "   Each entry has: name, distance_km, display, nav_url.",
+    "   You can create additional text layers to show station #2 and #3:",
+    "   - 2nd station: json_path = stations.top[1].display",
+    "   - 3rd station: json_path = stations.top[2].display"
+  ]
 }
