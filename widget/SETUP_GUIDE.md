@@ -65,12 +65,18 @@ var main = function() {
 
 ## Step 4: Add the Text Layers
 
-For each text layer below:
+For each text layer below, use Widgy's built-in **Endpoint** data source (not JavaScript -- the JS async mode is unreliable for `fetch()` in text layers):
+
 1. Tap **"+"** > select **Text**
 2. Set the position and style as shown
-3. Tap the **cube icon** > choose **javascript[async + no main()]**
-4. **Delete any predefined code**, paste the snippet, and **replace placeholders**
-5. Tap **RUN** to verify
+3. Tap the **data source cube icon**
+4. Select **"Endpoint"**
+5. Enter your API URL:
+   ```
+   YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG
+   ```
+6. Tap **"RUN"** -- Widgy fetches the JSON and shows all available fields
+7. Select the field listed for each layer below
 
 ### Gas Icon (SF Symbol, not a text layer)
 - Tap **"+"** > select **Symbol**
@@ -88,23 +94,13 @@ For each text layer below:
 - Position: x=96, y=132, width=80, height=18
 - Font: SF Pro, **Bold**, size 13
 - Color: **#FFFFFF** (white)
-- JavaScript:
-```javascript
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.gas_price.display;
-```
+- Endpoint field: **`gas_price.display`** (shows "152.9 c/L")
 
 ### Price Change
 - Position: x=176, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#FFFFFF**
-- JavaScript:
-```javascript
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.gas_price.change_display;
-```
+- Endpoint field: **`gas_price.change_display`** (shows "-8.0c")
 
 ### Pin Icon (SF Symbol)
 - Tap **"+"** > select **Symbol**
@@ -116,24 +112,14 @@ data.gas_price.change_display;
 - Position: x=28, y=150, width=240, height=18
 - Font: SF Pro, Regular, size 11
 - Color: **#AEAEB2**
-- JavaScript:
-```javascript
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.stations.nearest || 'No stations nearby';
-```
+- Endpoint field: **`stations.nearest`** (shows "Petro-Canada - Hwy 7 & Warden (3.3 km)")
 
 ### Station Count
 - Position: x=260, y=150, width=70, height=18
 - Font: SF Pro, Regular, size 11
 - Color: **#8E8E93**
 - Text alignment: Right
-- JavaScript:
-```javascript
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-String(data.stations.count) + ' nearby';
-```
+- Endpoint field: **`stations.count`** (shows "10")
 
 ---
 

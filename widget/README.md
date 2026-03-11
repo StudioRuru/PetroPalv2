@@ -22,30 +22,30 @@
 
 #### Layer 2: Map Image
 - Type: Image
-- Source: Web URL (no cache)
-- URL: `https://YOUR_SERVER/api/map?lat={{location.latitude}}&lng={{location.longitude}}&format=redirect`
+- Source: Image > Web and Maps > URL
+- URL: `https://YOUR_SERVER/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG`
 - Position: top 75% of widget (x:4, y:4, w:356, h:126)
 - Corner radius: 12
 - **Tap Action**: Open URL → `https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},13z`
 
 #### Layer 3: Gas Price Text
 - Type: Text
-- Source: JSON API
-- URL: `https://YOUR_SERVER/api/widget-data?lat={{location.latitude}}&lng={{location.longitude}}`
-- JSON Path: `gas_price.display`
+- Data source: **Endpoint** (tap the cube icon > select "Endpoint")
+- URL: `https://YOUR_SERVER/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG`
+- Tap "RUN", then select field: `gas_price.display`
 - Font: SF Pro Bold, 13pt, White
 
 #### Layer 4: Price Change
 - Type: Text
-- Source: JSON API (same URL as above)
-- JSON Path: `gas_price.change_display`
+- Data source: **Endpoint** (same URL as above)
+- Field: `gas_price.change_display`
 - Font: SF Pro Mono Semibold, 12pt
 - Color: Use `gas_price.color` from API response (red for up, green for down)
 
 #### Layer 5: Station Info
 - Type: Text
-- Source: JSON API (same URL)
-- JSON Path: `stations.nearest`
+- Data source: **Endpoint** (same URL)
+- Field: `stations.nearest`
 - Font: SF Pro Regular, 11pt, `#AEAEB2`
 
 ### Option 2: Import JSON Template
@@ -59,10 +59,10 @@
 
 ## Location Access
 
-Widgy needs location permission to pass GPS coordinates to the API:
+Widgy's JS sandbox does **not** support `navigator.geolocation`. You have two options:
 
-- If Widgy supports `{{location.latitude}}` / `{{location.longitude}}` template variables in URL fields, the widget will auto-update based on your location
-- If template variables aren't supported, hardcode your coordinates in the URL (e.g., `lat=43.6532&lng=-79.3832` for downtown Toronto)
+- **Hardcode coordinates** in the URLs (e.g., `lat=43.874168&lng=-79.258543`)
+- **Use iOS Shortcuts** for automatic GPS -- see the [Setup Guide](SETUP_GUIDE.md#gps-via-ios-shortcuts) for the full shortcut steps
 
 ## Tap Actions
 

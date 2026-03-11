@@ -1,12 +1,8 @@
 // =============================================================================
-// PetroPal - Widgy JavaScript Snippets
+// PetroPal - Widgy Data Source Reference
 // =============================================================================
-// Each snippet below is SELF-CONTAINED. Paste it into the relevant layer.
 //
-// TEXT LAYERS:  Use "javascript[async + no main()]" mode
-// IMAGE LAYERS: Choose either "JavaScript" (main) or "javascript[async + no main()]"
-//
-// IMPORTANT: Replace these placeholders before pasting:
+// IMPORTANT: Replace these placeholders before use:
 //   YOUR_SERVER_URL → your deployed API (e.g., https://petropalv2-production.up.railway.app)
 //   YOUR_LAT        → your latitude  (e.g., 43.6532)
 //   YOUR_LNG        → your longitude (e.g., -79.3832)
@@ -17,65 +13,62 @@
 // =============================================================================
 
 
-// =====================
-// SNIPPET 1: Gas Price
-// =====================
-// Layer: Text  |  Mode: javascript[async + no main()]
-// Expected output: "160.9 c/L"
-
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.gas_price.display;
-
-
-// ===========================
-// SNIPPET 2: Price Change
-// ===========================
-// Layer: Text  |  Mode: javascript[async + no main()]
-// Expected output: "+2.0c"
-
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.gas_price.change_display;
-
-
-// ==============================
-// SNIPPET 3: Nearest Station
-// ==============================
-// Layer: Text  |  Mode: javascript[async + no main()]
-// Expected output: "Petro-Canada - Yonge & Bloor (0.3 km)"
-
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-data.stations.nearest || 'No stations nearby';
+// =============================================================================
+// TEXT LAYERS: Use Widgy's built-in "Endpoint" data source (NOT JavaScript)
+// =============================================================================
+//
+// Widgy's JavaScript async mode is unreliable for fetch() calls in text layers.
+// Instead, use the native Endpoint/JSON data source -- it's simpler and works:
+//
+// For each text layer:
+//   1. Tap the DATA SOURCE cube icon on the text layer
+//   2. Select "Endpoint"
+//   3. Enter your API URL:
+//      YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG
+//   4. Tap "RUN" -- Widgy fetches the JSON and shows available fields
+//   5. Select the field you want from the list
+//
+// Available JSON fields:
+//
+//   gas_price.display        → "152.9 c/L"
+//   gas_price.change_display → "-8.0c"
+//   gas_price.price          → "152.9"
+//   gas_price.change         → "-8.0"
+//   gas_price.trend          → "down"
+//   gas_price.color          → "#34C759"
+//   gas_price.date           → "12, 2026"
+//   stations.nearest         → "Petro-Canada - Hwy 7 & Warden (3.3 km)"
+//   stations.count           → 10
+//   stations.nav_url         → "https://www.google.com/maps/dir/..."
+//
 
 
 // ============================
-// SNIPPET 4: Station Count
+// MAP IMAGE LAYER
 // ============================
-// Layer: Text  |  Mode: javascript[async + no main()]
-// Expected output: "8"
-
-const resp = await fetch('YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG');
-const data = await resp.json();
-String(data.stations.count);
-
-
-// ============================
-// SNIPPET 5: Map Image
-// ============================
-// Layer: Image  |  Go to: Image > Web and Maps > JavaScript
+// Layer: Image  |  Go to: Image > Web and Maps
 //
 // The /api/map-image endpoint serves raw PNG bytes (no redirects).
-// Choose ONE of the two options below depending on which JS mode you pick.
-
-// --- OPTION A: "JavaScript" mode (uses main() function) ---
+// Choose ONE of these approaches:
+//
+// --- OPTION A: Direct URL (simplest, recommended) ---
+//   In the Image layer, go to: Image > Web and Maps > URL
+//   Paste this URL directly:
+//
+//   YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG
+//
+//
+// --- OPTION B: "JavaScript" mode (uses main() function) ---
+//   Go to: Image > Web and Maps > JavaScript
+//   Select "JavaScript" mode and paste:
 
 var main = function() {
     return 'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
 }
 
-// --- OPTION B: "javascript[async + no main()]" mode ---
+// --- OPTION C: "javascript[async + no main()]" mode ---
+//   Go to: Image > Web and Maps > JavaScript
+//   Select "javascript[async + no main()]" and paste:
 
 'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
 
