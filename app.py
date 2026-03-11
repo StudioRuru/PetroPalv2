@@ -92,7 +92,7 @@ def _get_nearby_stations(lat, lng, radius_km):
 
 
 def _build_static_map_url(lat, lng, stations):
-    """Build a Google Static Maps URL with station markers."""
+    """Build a Google Static Maps URL with station markers in dark mode."""
     base = "https://maps.googleapis.com/maps/api/staticmap"
     params = (
         f"?center={lat},{lng}"
@@ -100,6 +100,22 @@ def _build_static_map_url(lat, lng, stations):
         f"&size={config.MAP_WIDTH}x{config.MAP_HEIGHT}"
         f"&maptype=roadmap"
         f"&markers=color:blue%7Clabel:U%7C{lat},{lng}"
+    )
+
+    # Dark mode styling
+    params += (
+        "&style=element:geometry%7Ccolor:0x242f3e"
+        "&style=element:labels.text.stroke%7Ccolor:0x242f3e"
+        "&style=element:labels.text.fill%7Ccolor:0x746855"
+        "&style=feature:administrative.locality%7Celement:labels.text.fill%7Ccolor:0xd59563"
+        "&style=feature:road%7Celement:geometry%7Ccolor:0x38414e"
+        "&style=feature:road%7Celement:geometry.stroke%7Ccolor:0x212a37"
+        "&style=feature:road%7Celement:labels.text.fill%7Ccolor:0x9ca5b3"
+        "&style=feature:road.highway%7Celement:geometry%7Ccolor:0x746855"
+        "&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0x1f2835"
+        "&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0xf3d19c"
+        "&style=feature:water%7Celement:geometry%7Ccolor:0x17263c"
+        "&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x515c6d"
     )
 
     # Add station markers (limit to 50 to stay within URL length)
@@ -254,7 +270,7 @@ def api_map_image():
     return Response(
         resp.content,
         content_type=resp.headers.get("Content-Type", "image/png"),
-        headers={"Cache-Control": "public, max-age=300"},
+        headers={"Cache-Control": "public, max-age=60"},
     )
 
 
