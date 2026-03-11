@@ -98,26 +98,33 @@ def _build_static_map_url(lat, lng, stations):
         f"?center={lat},{lng}"
         f"&zoom={config.MAP_ZOOM}"
         f"&size={config.MAP_WIDTH}x{config.MAP_HEIGHT}"
+        f"&scale=2"
         f"&maptype=roadmap"
         f"&markers=color:blue%7Clabel:U%7C{lat},{lng}"
     )
 
-    # High-contrast dark mode styling for widget readability
+    # Custom dark-mode styling (exported from mapstyle.withgoogle.com)
     params += (
-        "&style=element:geometry%7Ccolor:0x1a1a2e"
-        "&style=element:labels.text.fill%7Ccolor:0xffffff"
-        "&style=element:labels.text.stroke%7Ccolor:0x1a1a2e"
+        "&style=element:geometry%7Ccolor:0x242f3e"
+        "&style=element:labels.text.fill%7Ccolor:0xebebeb"
+        "&style=element:labels.text.stroke%7Ccolor:0x242f3e"
+        "&style=feature:administrative.locality%7Celement:labels%7Ccolor:0x232323"
         "&style=feature:administrative.locality%7Celement:labels.text.fill%7Ccolor:0xffffff"
-        "&style=feature:road%7Celement:geometry%7Ccolor:0xe0e0e0"
-        "&style=feature:road%7Celement:geometry.stroke%7Ccolor:0x1a1a2e"
-        "&style=feature:road%7Celement:labels.text.fill%7Ccolor:0xffffff"
-        "&style=feature:road.highway%7Celement:geometry%7Ccolor:0xf0c040"
-        "&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0xc49a30"
+        "&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0xd59563"
+        "&style=feature:poi.park%7Celement:geometry%7Ccolor:0x263c3f"
+        "&style=feature:poi.park%7Celement:labels.text.fill%7Ccolor:0x6b9a76"
+        "&style=feature:road%7Celement:geometry%7Ccolor:0x4d587b"
+        "&style=feature:road%7Celement:geometry.stroke%7Ccolor:0x212a37"
+        "&style=feature:road%7Celement:labels.text.fill%7Ccolor:0xd6d6d6"
+        "&style=feature:road%7Celement:labels.text.stroke%7Ccolor:0x232323"
+        "&style=feature:road.highway%7Celement:geometry%7Ccolor:0xa39b8a"
+        "&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0x1f2835"
         "&style=feature:road.highway%7Celement:labels.text.fill%7Ccolor:0xffffff"
-        "&style=feature:water%7Celement:geometry%7Ccolor:0x0d47a1"
-        "&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x90caf9"
-        "&style=feature:poi%7Celement:labels.text.fill%7Ccolor:0x90caf9"
-        "&style=feature:transit%7Celement:geometry%7Ccolor:0x2a2a4e"
+        "&style=feature:transit%7Celement:geometry%7Ccolor:0x2f3948"
+        "&style=feature:transit.station%7Celement:labels.text.fill%7Ccolor:0xd59563"
+        "&style=feature:water%7Celement:geometry%7Ccolor:0x17263c"
+        "&style=feature:water%7Celement:labels.text.fill%7Ccolor:0x515c6d"
+        "&style=feature:water%7Celement:labels.text.stroke%7Ccolor:0x17263c"
     )
 
     # Add station markers (limit to 50 to stay within URL length)
