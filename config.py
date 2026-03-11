@@ -10,8 +10,8 @@ DEFAULT_LNG = float(os.getenv("DEFAULT_LNG", "-79.3832"))
 
 SEARCH_RADIUS_KM = float(os.getenv("SEARCH_RADIUS_KM", "10"))
 
-MAP_WIDTH = int(os.getenv("MAP_WIDTH", "600"))
-MAP_HEIGHT = int(os.getenv("MAP_HEIGHT", "400"))
+MAP_WIDTH = int(os.getenv("MAP_WIDTH", "640"))
+MAP_HEIGHT = int(os.getenv("MAP_HEIGHT", "640"))
 MAP_ZOOM = int(os.getenv("MAP_ZOOM", "17"))
 MAX_MAP_STATIONS = int(os.getenv("MAX_MAP_STATIONS", "3"))
 
