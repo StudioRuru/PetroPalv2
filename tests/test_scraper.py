@@ -127,7 +127,3 @@ class TestScraper:
         premium = get_tomorrow_gas_price("premium")
         assert premium["price"] == 190.9
         assert premium["fuel_type"] == "Premium"
-
-        diesel = get_tomorrow_gas_price("diesel")
-        assert diesel["price"] == 198.9
-        assert diesel["fuel_type"] == "Diesel"

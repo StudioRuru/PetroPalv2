@@ -27,10 +27,10 @@ _intersection_cache = {}
 # Persisted to disk so locations survive server restarts.
 _device_locations = {}
 
-# Fuel type preference per device: { device_id: "regular" | "premium" | "diesel" }
+# Fuel type preference per device: { device_id: "regular" | "premium" }
 _fuel_preferences = {}
-_FUEL_TYPES = ["regular", "premium", "diesel"]
-_FUEL_LABELS = {"regular": "Regular", "premium": "Premium", "diesel": "Diesel"}
+_FUEL_TYPES = ["regular", "premium"]
+_FUEL_LABELS = {"regular": "87", "premium": "91"}
 
 
 def _load_device_locations():
@@ -586,6 +586,7 @@ def api_widget_data():
                 "date": date_short,
                 "fuel_type": fuel,
                 "fuel_label": fuel_label,
+                "tomorrow_label": f"Tomorrow ({fuel_label}):",
             },
             "stations": {
                 "count": len(nearby),

@@ -47,7 +47,7 @@ Tap the **play button** on the Shortcut to send your location to the server for 
 
 ### Create the "PetroPal Toggle Fuel" Shortcut
 
-This Shortcut lets you tap a button on the widget to cycle between **Regular → Premium → Diesel** prices.
+This Shortcut lets you tap the "Tomorrow (87):" label to toggle between **87 (Regular)** and **91 (Premium)**.
 
 1. Open the **Shortcuts** app
 2. Create a new Shortcut called **"PetroPal Toggle Fuel"**
@@ -56,8 +56,9 @@ This Shortcut lets you tap a button on the widget to cycle between **Regular →
 | # | Action | Configuration |
 |---|--------|---------------|
 | 1 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/toggle-fuel` |
+| 2 | **Open App** | App: **Widgy** |
 
-That's it! Each time it runs, the server cycles to the next fuel type. The widget will show the updated price on its next refresh.
+Step 2 forces Widgy to reload, so the price updates immediately after toggling.
 
 ---
 
@@ -120,14 +121,21 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 - Position: x=8, y=134, width=16, height=16
 - Tint color: **#FF9500** (orange)
 
-### "Tomorrow:" Label (static text, no data source needed)
-- Position: x=28, y=132, width=70, height=18
-- Text: `Tomorrow:`
+### "Tomorrow (87):" Label (tappable — toggles fuel type)
+- Position: x=28, y=132, width=100, height=18
 - Font: SF Pro, Regular, size 11
 - Color: **#8E8E93** (gray)
+- Endpoint field: **`gas_price.tomorrow_label`** (shows "Tomorrow (87):" or "Tomorrow (91):")
+
+Then add a **Tap Action** layer on top:
+1. Tap **"+"** > select **Tap Action**
+2. Position: x=8, y=128, width=120, height=26
+3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Fuel"**
+
+Tapping the label toggles between 87 (Regular) and 91 (Premium), and the price updates on the next widget refresh.
 
 ### Gas Price
-- Position: x=96, y=132, width=80, height=18
+- Position: x=128, y=132, width=80, height=18
 - Font: SF Pro, **Bold**, size 13
 - Color: **#FFFFFF** (white)
 - Endpoint field: **`gas_price.display`** (shows "152.9 c/L")
@@ -137,36 +145,22 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 Create **three text layers** at the **same position**. Only one will have text at a time; the others will be empty. This gives you dynamic color without JavaScript.
 
 **Layer A — Price Up (red)**
-- Position: x=176, y=132, width=50, height=18
+- Position: x=208, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#FF3B30** (red)
 - Endpoint field: **`gas_price.change_red`** (shows "+2.0c" only when price goes up)
 
 **Layer B — Price Down (green)**
-- Position: x=176, y=132, width=50, height=18
+- Position: x=208, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#34C759** (green)
 - Endpoint field: **`gas_price.change_green`** (shows "-8.0c" only when price goes down)
 
 **Layer C — Stable (gray)**
-- Position: x=176, y=132, width=50, height=18
+- Position: x=208, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#8E8E93** (gray)
 - Endpoint field: **`gas_price.change_gray`** (shows "0.0c" only when price is stable)
-
-### Fuel Type Label (tappable toggle)
-- Position: x=226, y=132, width=70, height=18
-- Font: SF Pro, Medium, size 11
-- Color: **#636366** (dim gray)
-- Text alignment: Right
-- Endpoint field: **`gas_price.fuel_label`** (shows "Regular", "Premium", or "Diesel")
-
-Then add a **Tap Action** layer on top:
-1. Tap **"+"** > select **Tap Action**
-2. Position: x=220, y=128, width=82, height=26
-3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Fuel"**
-
-Tapping the fuel label cycles: Regular → Premium → Diesel → Regular.
 
 ### Pin Icon (SF Symbol)
 - Tap **"+"** > select **Symbol**
