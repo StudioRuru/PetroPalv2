@@ -17,6 +17,9 @@ CORS(app)
 # In-memory station cache
 _stations = None
 
+# Cache for reverse-geocoded intersection names: { "lat,lng": "Street1 & Street2" }
+_intersection_cache = {}
+
 # Device location store: { device_id: { lat, lng, updated_at } }
 # Persisted to disk so locations survive server restarts.
 _device_locations = {}
@@ -64,6 +67,60 @@ def haversine(lat1, lon1, lat2, lon2):
     )
     c = 2 * math.asin(math.sqrt(a))
     return R * c
+
+
+def _get_intersection(lat, lng):
+    """Reverse-geocode a lat/lng to the nearest intersection name."""
+    cache_key = f"{lat},{lng}"
+    if cache_key in _intersection_cache:
+        return _intersection_cache[cache_key]
+
+    if not config.GOOGLE_MAPS_API_KEY:
+        return None
+
+    try:
+        resp = http_requests.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={
+                "latlng": cache_key,
+                "result_type": "intersection",
+                "key": config.GOOGLE_MAPS_API_KEY,
+            },
+            timeout=5,
+        )
+        data = resp.json()
+        if data.get("results"):
+            # e.g. "Spadina Ave & King St W, Toronto, ON M5V 2H1, Canada"
+            full = data["results"][0].get("formatted_address", "")
+            # Keep just the intersection part (before the city/postal)
+            intersection = full.split(",")[0] if full else None
+            _intersection_cache[cache_key] = intersection
+            return intersection
+    except Exception:
+        pass
+
+    # Fallback: try street_address to get at least a street name
+    try:
+        resp = http_requests.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={
+                "latlng": cache_key,
+                "result_type": "street_address",
+                "key": config.GOOGLE_MAPS_API_KEY,
+            },
+            timeout=5,
+        )
+        data = resp.json()
+        if data.get("results"):
+            full = data["results"][0].get("formatted_address", "")
+            street = full.split(",")[0] if full else None
+            _intersection_cache[cache_key] = street
+            return street
+    except Exception:
+        pass
+
+    _intersection_cache[cache_key] = None
+    return None
 
 
 def _get_nearby_stations(lat, lng, radius_km):
@@ -314,11 +371,14 @@ def api_widget_data():
     # Build list of nearest stations for display
     nearest_list = []
     for n in top_stations:
+        intersection = _get_intersection(n["lat"], n["lng"])
+        label = intersection if intersection else n["name"]
         nearest_list.append(
             {
                 "name": n["name"],
+                "intersection": intersection,
                 "distance_km": n["distance_km"],
-                "display": f"{n['name']} ({n['distance_km']} km)",
+                "display": f"{label} ({n['distance_km']} km)",
                 "nav_url": n["nav_url"],
             }
         )
