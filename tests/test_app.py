@@ -38,7 +38,7 @@ class TestHaversine:
 
 class TestNearbyStations:
     def test_returns_sorted_by_distance(self):
-        stations = _get_nearby_stations(43.6532, -79.3832, 15)
+        stations = _get_nearby_stations(43.6532, -79.3832, 10)
         if len(stations) >= 2:
             for i in range(len(stations) - 1):
                 assert stations[i]["distance_km"] <= stations[i + 1]["distance_km"]
@@ -49,7 +49,7 @@ class TestNearbyStations:
             assert s["distance_km"] <= 5.0
 
     def test_nav_url_present(self):
-        stations = _get_nearby_stations(43.6532, -79.3832, 15)
+        stations = _get_nearby_stations(43.6532, -79.3832, 10)
         for s in stations:
             assert "google.com/maps/dir" in s["nav_url"]
 
@@ -171,3 +171,10 @@ class TestWidgetDataEndpoint:
         assert "meta" in data
         assert data["gas_price"]["display"] == "160.9 c/L"
         assert data["gas_price"]["change_display"] == "+2.0c"
+        # Verify top stations list (max 3 nearest)
+        assert "top" in data["stations"]
+        assert len(data["stations"]["top"]) <= 3
+        if data["stations"]["top"]:
+            assert "name" in data["stations"]["top"][0]
+            assert "distance_km" in data["stations"]["top"][0]
+            assert "nav_url" in data["stations"]["top"][0]

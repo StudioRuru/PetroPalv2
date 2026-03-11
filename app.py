@@ -129,7 +129,8 @@ def api_map():
     fmt = request.args.get("format", "redirect")
 
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
-    map_url = _build_static_map_url(lat, lng, nearby)
+    top_stations = nearby[: config.MAX_MAP_STATIONS]
+    map_url = _build_static_map_url(lat, lng, top_stations)
 
     if map_url is None:
         return jsonify({"error": "GOOGLE_MAPS_API_KEY is not configured"}), 500
@@ -165,14 +166,20 @@ def api_widget_data():
 
     # Stations
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
-    map_url = _build_static_map_url(lat, lng, nearby)
+    top_stations = nearby[: config.MAX_MAP_STATIONS]
+    map_url = _build_static_map_url(lat, lng, top_stations)
 
-    nearest_info = None
-    nearest_nav = None
-    if nearby:
-        n = nearby[0]
-        nearest_info = f"{n['name']} ({n['distance_km']} km)"
-        nearest_nav = n["nav_url"]
+    # Build list of nearest stations for display
+    nearest_list = []
+    for n in top_stations:
+        nearest_list.append(
+            {
+                "name": n["name"],
+                "distance_km": n["distance_km"],
+                "display": f"{n['name']} ({n['distance_km']} km)",
+                "nav_url": n["nav_url"],
+            }
+        )
 
     # Gas price
     price_data = get_tomorrow_gas_price()
@@ -210,8 +217,9 @@ def api_widget_data():
             },
             "stations": {
                 "count": len(nearby),
-                "nearest": nearest_info,
-                "nav_url": nearest_nav,
+                "nearest": nearest_list[0]["display"] if nearest_list else None,
+                "nav_url": nearest_list[0]["nav_url"] if nearest_list else None,
+                "top": nearest_list,
             },
             "meta": {
                 "updated_at": datetime.now(timezone.utc).isoformat(),

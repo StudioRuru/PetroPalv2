@@ -8,11 +8,12 @@ GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
 DEFAULT_LAT = float(os.getenv("DEFAULT_LAT", "43.6532"))
 DEFAULT_LNG = float(os.getenv("DEFAULT_LNG", "-79.3832"))
 
-SEARCH_RADIUS_KM = float(os.getenv("SEARCH_RADIUS_KM", "15"))
+SEARCH_RADIUS_KM = float(os.getenv("SEARCH_RADIUS_KM", "10"))
 
 MAP_WIDTH = int(os.getenv("MAP_WIDTH", "600"))
 MAP_HEIGHT = int(os.getenv("MAP_HEIGHT", "400"))
-MAP_ZOOM = int(os.getenv("MAP_ZOOM", "11"))
+MAP_ZOOM = int(os.getenv("MAP_ZOOM", "12"))
+MAX_MAP_STATIONS = int(os.getenv("MAX_MAP_STATIONS", "3"))
 
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", "3600"))
 
