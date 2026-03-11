@@ -1,6 +1,7 @@
 """PetroPal - Flask API for Petro-Canada station finder and gas price widget."""
 
 import json
+import logging
 import math
 from datetime import datetime, timezone
 
@@ -10,6 +11,8 @@ from flask_cors import CORS
 
 import config
 from scraper.gasbuddy import get_tomorrow_gas_price
+
+log = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
@@ -82,7 +85,7 @@ def _get_intersection(lat, lng):
     if not config.GOOGLE_MAPS_API_KEY:
         return None
 
-    for result_type in ("intersection", "street_address"):
+    for result_type in ("intersection", "street_address", "route"):
         try:
             resp = http_requests.get(
                 "https://maps.googleapis.com/maps/api/geocode/json",
@@ -94,13 +97,17 @@ def _get_intersection(lat, lng):
                 timeout=5,
             )
             data = resp.json()
-            if data.get("results"):
+            status = data.get("status", "")
+            if status not in ("OK", "ZERO_RESULTS"):
+                log.warning("Geocoding %s for %s: %s", result_type, cache_key, status)
+            if status == "OK" and data.get("results"):
                 full = data["results"][0].get("formatted_address", "")
                 label = full.split(",")[0] if full else None
-                _intersection_cache[cache_key] = label
-                return label
-        except Exception:
-            pass
+                if label:
+                    _intersection_cache[cache_key] = label
+                    return label
+        except Exception as e:
+            log.warning("Geocoding error for %s: %s", cache_key, e)
 
     _intersection_cache[cache_key] = None
     return None
@@ -275,6 +282,29 @@ def api_update_location():
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
+
+
+@app.route("/api/debug/geocode")
+def api_debug_geocode():
+    """Debug endpoint: test reverse geocoding for a given lat/lng."""
+    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
+    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+    intersection = _get_intersection(lat, lng)
+    street = _street_from_address(
+        next(
+            (s["address"] for s in _load_stations()
+             if s["lat"] == lat and s["lng"] == lng),
+            "",
+        )
+    )
+    return jsonify({
+        "lat": lat,
+        "lng": lng,
+        "api_key_set": bool(config.GOOGLE_MAPS_API_KEY),
+        "geocoded_intersection": intersection,
+        "address_fallback": street,
+        "final_label": intersection or street or "Petro-Canada",
+    })
 
 
 @app.route("/api/stations")
