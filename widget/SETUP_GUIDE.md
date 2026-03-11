@@ -45,6 +45,20 @@ That's it! The server now remembers your GPS. All widget URLs will use it.
 
 Tap the **play button** on the Shortcut to send your location to the server for the first time. This must happen before the widget URLs will return location-specific data.
 
+### Create the "PetroPal Toggle Fuel" Shortcut
+
+This Shortcut lets you tap a button on the widget to cycle between **Regular → Premium → Diesel** prices.
+
+1. Open the **Shortcuts** app
+2. Create a new Shortcut called **"PetroPal Toggle Fuel"**
+3. Add these actions in order:
+
+| # | Action | Configuration |
+|---|--------|---------------|
+| 1 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/toggle-fuel` |
+
+That's it! Each time it runs, the server cycles to the next fuel type. The widget will show the updated price on its next refresh.
+
 ---
 
 ## Step 1: Create the Widget
@@ -139,6 +153,20 @@ Create **three text layers** at the **same position**. Only one will have text a
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#8E8E93** (gray)
 - Endpoint field: **`gas_price.change_gray`** (shows "0.0c" only when price is stable)
+
+### Fuel Type Label (tappable toggle)
+- Position: x=226, y=132, width=70, height=18
+- Font: SF Pro, Medium, size 11
+- Color: **#636366** (dim gray)
+- Text alignment: Right
+- Endpoint field: **`gas_price.fuel_label`** (shows "Regular", "Premium", or "Diesel")
+
+Then add a **Tap Action** layer on top:
+1. Tap **"+"** > select **Tap Action**
+2. Position: x=220, y=128, width=82, height=26
+3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Fuel"**
+
+Tapping the fuel label cycles: Regular → Premium → Diesel → Regular.
 
 ### Pin Icon (SF Symbol)
 - Tap **"+"** > select **Symbol**

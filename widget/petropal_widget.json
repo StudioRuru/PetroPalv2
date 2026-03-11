@@ -154,6 +154,33 @@
       }
     },
     {
+      "type": "text",
+      "name": "Fuel Type Label",
+      "_comment": "Shows current fuel type (Regular/Premium/Diesel). Tapping it toggles to the next type.",
+      "position": {"x": 226, "y": 132, "width": 70, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "gas_price.fuel_label"
+      },
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "medium",
+        "font_size": 11,
+        "text_color": "#636366",
+        "text_alignment": "right"
+      }
+    },
+    {
+      "type": "tap_action",
+      "name": "Fuel Toggle Tap Area",
+      "_comment": "In Widgy: add a Tap Action layer over the fuel label, set action to 'External Action > Run Shortcut > PetroPal Toggle Fuel'",
+      "position": {"x": 220, "y": 128, "width": 82, "height": 26},
+      "action": {
+        "type": "run_shortcut",
+        "shortcut_name": "PetroPal Toggle Fuel"
+      }
+    },
+    {
       "type": "symbol",
       "name": "Refresh Icon",
       "_comment": "Visual only - the actual tap action is a separate Tap Action layer overlaid on this icon (see setup step 5)",

@@ -27,6 +27,11 @@ _intersection_cache = {}
 # Persisted to disk so locations survive server restarts.
 _device_locations = {}
 
+# Fuel type preference per device: { device_id: "regular" | "premium" | "diesel" }
+_fuel_preferences = {}
+_FUEL_TYPES = ["regular", "premium", "diesel"]
+_FUEL_LABELS = {"regular": "Regular", "premium": "Premium", "diesel": "Diesel"}
+
 
 def _load_device_locations():
     """Load saved device locations from disk into memory."""
@@ -302,6 +307,58 @@ def api_update_location():
     })
 
 
+@app.route("/api/toggle-fuel", methods=["GET", "POST"])
+def api_toggle_fuel():
+    """Toggle or set fuel type preference for a device.
+
+    - No 'fuel' param: cycles regular → premium → diesel → regular
+    - With 'fuel' param: sets to that specific type
+
+    The preference is used by /api/widget-data to return the matching price.
+    """
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or (request.get_json(silent=True) or {}).get("device_id")
+        or "default"
+    )
+    explicit = (
+        request.args.get("fuel")
+        or (request.get_json(silent=True) or {}).get("fuel")
+    )
+
+    if explicit and explicit.lower() in _FUEL_TYPES:
+        new_fuel = explicit.lower()
+    else:
+        current = _fuel_preferences.get(device_id, "regular")
+        idx = _FUEL_TYPES.index(current) if current in _FUEL_TYPES else 0
+        new_fuel = _FUEL_TYPES[(idx + 1) % len(_FUEL_TYPES)]
+
+    _fuel_preferences[device_id] = new_fuel
+
+    return jsonify({
+        "status": "ok",
+        "device_id": device_id,
+        "fuel_type": new_fuel,
+        "fuel_label": _FUEL_LABELS[new_fuel],
+    })
+
+
+@app.route("/api/fuel-type")
+def api_fuel_type():
+    """Return the current fuel type preference for a device."""
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or "default"
+    )
+    current = _fuel_preferences.get(device_id, "regular")
+    return jsonify({
+        "fuel_type": current,
+        "fuel_label": _FUEL_LABELS.get(current, "Regular"),
+    })
+
+
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
@@ -421,9 +478,23 @@ def api_map_image():
     )
 
 
+def _resolve_fuel_type():
+    """Resolve fuel type from query param or device preference."""
+    explicit = request.args.get("fuel")
+    if explicit and explicit.lower() in _FUEL_TYPES:
+        return explicit.lower()
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or "default"
+    )
+    return _fuel_preferences.get(device_id, "regular")
+
+
 @app.route("/api/gas-price")
 def api_gas_price():
-    data = get_tomorrow_gas_price()
+    fuel = _resolve_fuel_type()
+    data = get_tomorrow_gas_price(fuel)
     trend = data.get("trend", "unknown")
     return jsonify(
         {
@@ -433,6 +504,7 @@ def api_gas_price():
             "trend": trend,
             "color": _trend_color(trend),
             "date": data.get("date"),
+            "fuel_type": data.get("fuel_type", "Regular"),
             "source": data.get("source", "gaswizard.ca"),
             "stale": data.get("stale", False),
             "error": data.get("error"),
@@ -468,10 +540,12 @@ def api_widget_data():
         )
 
     # Gas price
-    price_data = get_tomorrow_gas_price()
+    fuel = _resolve_fuel_type()
+    price_data = get_tomorrow_gas_price(fuel)
     trend = price_data.get("trend", "unknown")
     price = price_data.get("price")
     change = price_data.get("change")
+    fuel_label = _FUEL_LABELS.get(fuel, "Regular")
 
     display = f"{price} c/L" if price else "N/A"
     if change is not None:
@@ -510,6 +584,8 @@ def api_widget_data():
                 "trend": trend,
                 "color": _trend_color(trend),
                 "date": date_short,
+                "fuel_type": fuel,
+                "fuel_label": fuel_label,
             },
             "stations": {
                 "count": len(nearby),
