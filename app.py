@@ -17,8 +17,29 @@ CORS(app)
 # In-memory station cache
 _stations = None
 
-# In-memory device location store: { device_id: { lat, lng, updated_at } }
+# Device location store: { device_id: { lat, lng, updated_at } }
+# Persisted to disk so locations survive server restarts.
 _device_locations = {}
+
+
+def _load_device_locations():
+    """Load saved device locations from disk into memory."""
+    global _device_locations
+    try:
+        with open(config.DEVICE_LOCATIONS_FILE, "r") as f:
+            _device_locations = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        _device_locations = {}
+
+
+def _save_device_locations():
+    """Persist device locations to disk."""
+    with open(config.DEVICE_LOCATIONS_FILE, "w") as f:
+        json.dump(_device_locations, f, indent=2)
+
+
+# Load any previously saved locations on startup
+_load_device_locations()
 
 
 def _load_stations():
@@ -119,7 +140,12 @@ def _resolve_location():
         loc = _device_locations[device_id]
         return loc["lat"], loc["lng"]
 
-    # Fall back to defaults
+    # Check the "default" device (iOS Shortcut sends without device_id)
+    if "default" in _device_locations:
+        loc = _device_locations["default"]
+        return loc["lat"], loc["lng"]
+
+    # Fall back to config defaults
     return config.DEFAULT_LAT, config.DEFAULT_LNG
 
 
@@ -158,6 +184,7 @@ def api_update_location():
         "lng": float(lng),
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
+    _save_device_locations()
 
     return jsonify({
         "status": "ok",
