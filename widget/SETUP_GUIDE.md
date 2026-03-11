@@ -7,14 +7,43 @@
 
 ## Before you start
 
-**Replace these placeholders** in every snippet:
+**Replace this placeholder** in every URL:
 - `YOUR_SERVER_URL` → your deployed API URL
-- `YOUR_LAT` → your latitude (e.g., `43.6532`)
-- `YOUR_LNG` → your longitude (e.g., `-79.3832`)
 
-> `navigator.geolocation` is **NOT available** in Widgy's JS sandbox.
-> Coordinates must be hardcoded. For automatic GPS updates, see
-> [GPS via iOS Shortcuts](#gps-via-ios-shortcuts) at the bottom.
+> **GPS is handled automatically.** An iOS Shortcut sends your location to
+> the server, so widget URLs don't need latitude/longitude parameters.
+> See [Step 0: iOS Shortcut Setup](#step-0-ios-shortcut-setup-do-this-first) below.
+
+---
+
+## Step 0: iOS Shortcut Setup (do this first!)
+
+The Shortcut sends your phone's GPS to the server so all widget layers
+automatically use your current location.
+
+### Create the Shortcut
+
+1. Open the **Shortcuts** app
+2. Create a new Shortcut called **"PetroPal Refresh"**
+3. Add these actions in order:
+
+| # | Action | Configuration |
+|---|--------|---------------|
+| 1 | **Get Current Location** | (no config needed) |
+| 2 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/update-location?lat=[Latitude]&lng=[Longitude]` -- tap `[Latitude]` and `[Longitude]` and select the magic variables from step 1's Current Location |
+
+That's it! The server now remembers your GPS. All widget URLs will use it.
+
+### Automate It (hourly refresh)
+
+1. Go to **Shortcuts > Automation > "+"**
+2. Trigger: **Time of Day** → repeat every 1 hour
+3. Action: **Run Shortcut** → select "PetroPal Refresh"
+4. Toggle OFF **"Ask Before Running"**
+
+### Run It Once Now
+
+Tap the **play button** on the Shortcut to send your location to the server for the first time. This must happen before the widget URLs will return location-specific data.
 
 ---
 
@@ -38,28 +67,21 @@
 ## Step 3: Add the Map Image Layer
 
 The `/api/map-image` endpoint serves the map as raw PNG bytes (no redirects, no CORS issues).
+After the Shortcut has run, no coordinates are needed in the URL.
 
 1. Tap **"+"** > select **Image**
 2. Set position: x=4, y=4, width=356, height=126
 3. Corner radius: **12**
-4. Go to **Image** > **Web and Maps** > **JavaScript**
-5. **Delete any predefined code** (like the fox image example)
-6. Select either JS mode and paste the corresponding code:
+4. Go to **Image** > **Web and Maps** > **URL**
+5. Enter: `YOUR_SERVER_URL/api/map-image`
+6. The map should appear showing your location and nearby Petro-Canada stations
 
-**If you chose `JavaScript` (main function) mode:**
+**Alternative (JavaScript mode):** If the URL option doesn't work, use **JavaScript** mode:
 ```javascript
 var main = function() {
-    return 'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
+    return 'YOUR_SERVER_URL/api/map-image';
 }
 ```
-
-**If you chose `javascript[async + no main()]` mode:**
-```javascript
-'YOUR_SERVER_URL/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG';
-```
-
-7. **Replace the placeholders** with your actual values
-8. Tap **RUN** -- you should see the map image appear
 
 ---
 
@@ -71,9 +93,9 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 2. Set the position and style as shown
 3. Tap the **data source cube icon**
 4. Select **"Endpoint"**
-5. Enter your API URL:
+5. Enter your API URL (no coordinates needed):
    ```
-   YOUR_SERVER_URL/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG
+   YOUR_SERVER_URL/api/widget-data
    ```
 6. Tap **"RUN"** -- Widgy fetches the JSON and shows all available fields
 7. Select the field listed for each layer below
@@ -136,7 +158,9 @@ Widgy tap actions are **separate layers** -- they are invisible rectangles you p
 ### Refresh Tap Action (the actual button)
 1. Tap **"+"** > select **Tap Action**
 2. Position it over the refresh icon: x=330, y=128, width=34, height=34
-3. Set the action to: **Reload Widget**
+3. Set the action to: **External Action > Run Shortcut > "PetroPal Refresh"**
+
+This lets you tap the refresh icon to update your GPS and data on demand.
 
 ### Map Tap Action (optional -- opens Google Maps)
 1. Tap **"+"** > select **Tap Action**
@@ -148,59 +172,18 @@ Widgy tap actions are **separate layers** -- they are invisible rectangles you p
 
 ## Troubleshooting
 
-**Map shows blank / "user undefined":**
-- Make sure you **deleted the predefined fox image code** before pasting
-- Check that you replaced `YOUR_LAT` and `YOUR_LNG` with actual numbers
-- Test the URL directly in a browser: `YOUR_SERVER_URL/api/map-image?lat=43.6532&lng=-79.3832`
+**Map shows blank:**
+- Make sure the iOS Shortcut has run at least once (tap play to run manually)
+- Test the URL in a browser: `YOUR_SERVER_URL/api/map-image`
+- If still blank, try with explicit coords: `YOUR_SERVER_URL/api/map-image?lat=43.6532&lng=-79.3832`
 
 **Data shows "N/A":**
 - The gas price scraper may not have data yet -- check `YOUR_SERVER_URL/api/gas-price` in a browser
 - Verify your API URL is correct and the server is running
 
+**Location is wrong / shows default Toronto:**
+- Run the "PetroPal Refresh" Shortcut manually to send fresh GPS
+- Check the server received it: `YOUR_SERVER_URL/api/update-location` should not return an error
+
 **"Reload Widget" briefly opens Widgy app:**
 - This is normal iOS behavior. Apple requires widgets to open the parent app before executing tap actions.
-
----
-
-## GPS via iOS Shortcuts
-
-To get **dynamic GPS-based location** (since Widgy's JS can't access GPS):
-
-### Create the Shortcut
-
-1. Open the **Shortcuts** app
-2. Create a new Shortcut called **"PetroPal Refresh"**
-3. Add these actions in order:
-
-| # | Action | Configuration |
-|---|--------|---------------|
-| 1 | **Get Current Location** | (no config needed) |
-| 2 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/widget-data?lat=[Latitude]&lng=[Longitude]` -- tap the `[Latitude]` and `[Longitude]` placeholders and select the magic variables from step 1 |
-| 3 | **Save File** | Destination: `iCloud Drive/Widgy/petropal.json` -- toggle OFF "Ask Where to Save" |
-| 4 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/map-image?lat=[Latitude]&lng=[Longitude]` (same magic variables) |
-| 5 | **Save File** | Destination: `iCloud Drive/Widgy/petropal_map.png` -- toggle OFF "Ask Where to Save" |
-
-### Automate It
-
-1. Go to **Shortcuts > Automation > "+"**
-2. Trigger: **Time of Day** → repeat every 1 hour
-3. Action: **Run Shortcut** → select "PetroPal Refresh"
-4. Toggle OFF **"Ask Before Running"**
-
-### Use in Widgy
-
-Once the Shortcut has run at least once:
-
-**For text layers** -- switch from JavaScript to **Files** data source:
-- File: `iCloud Drive/Widgy/petropal.json`
-- JSON path: `gas_price.display` (or `change_display`, `stations.nearest`, etc.)
-
-**For the map image** -- use Image > **Web and Maps** > **URL**:
-- File: `iCloud Drive/Widgy/petropal_map.png`
-
-### Manual Refresh via Widget
-
-Add a Tap Action layer over the refresh icon:
-- Action: **External Action > Run Shortcut > "PetroPal Refresh"**
-
-This lets you tap the widget to get fresh GPS + data on demand.

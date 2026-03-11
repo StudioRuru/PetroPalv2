@@ -17,6 +17,9 @@ CORS(app)
 # In-memory station cache
 _stations = None
 
+# In-memory device location store: { device_id: { lat, lng, updated_at } }
+_device_locations = {}
+
 
 def _load_stations():
     """Load stations from the static JSON file (cached in memory)."""
@@ -101,6 +104,68 @@ def _trend_color(trend):
     return colors.get(trend, "#8E8E93")
 
 
+def _resolve_location():
+    """Resolve lat/lng from query params, device_id lookup, or defaults."""
+    device_id = request.args.get("device_id") or request.args.get("device")
+    lat = request.args.get("lat", type=float)
+    lng = request.args.get("lng", type=float)
+
+    # If lat/lng explicitly provided, use them
+    if lat is not None and lng is not None:
+        return lat, lng
+
+    # If device_id provided, look up saved location
+    if device_id and device_id in _device_locations:
+        loc = _device_locations[device_id]
+        return loc["lat"], loc["lng"]
+
+    # Fall back to defaults
+    return config.DEFAULT_LAT, config.DEFAULT_LNG
+
+
+@app.route("/api/update-location", methods=["POST", "GET"])
+def api_update_location():
+    """Save device GPS coordinates on the server.
+
+    The iOS Shortcut calls this periodically to keep location fresh.
+    Accepts GET or POST so it works easily with Shortcuts' "Get Contents of URL".
+
+    Parameters:
+        device_id: A string identifier for the device (e.g., "my-iphone")
+        lat: Latitude
+        lng: Longitude
+    """
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or (request.get_json(silent=True) or {}).get("device_id")
+        or "default"
+    )
+    lat = (
+        request.args.get("lat", type=float)
+        or (request.get_json(silent=True) or {}).get("lat")
+    )
+    lng = (
+        request.args.get("lng", type=float)
+        or (request.get_json(silent=True) or {}).get("lng")
+    )
+
+    if lat is None or lng is None:
+        return jsonify({"error": "lat and lng are required"}), 400
+
+    _device_locations[device_id] = {
+        "lat": float(lat),
+        "lng": float(lng),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    return jsonify({
+        "status": "ok",
+        "device_id": device_id,
+        "location": _device_locations[device_id],
+    })
+
+
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
@@ -108,8 +173,7 @@ def health():
 
 @app.route("/api/stations")
 def api_stations():
-    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
-    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+    lat, lng = _resolve_location()
     radius = request.args.get("radius", config.SEARCH_RADIUS_KM, type=float)
 
     nearby = _get_nearby_stations(lat, lng, radius)
@@ -125,8 +189,7 @@ def api_stations():
 
 @app.route("/api/map")
 def api_map():
-    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
-    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+    lat, lng = _resolve_location()
     fmt = request.args.get("format", "redirect")
 
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
@@ -148,8 +211,7 @@ def api_map_image():
     This avoids CORS and redirect issues when loading the map in Widgy's
     JavaScript image layer.
     """
-    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
-    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+    lat, lng = _resolve_location()
 
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
     top_stations = nearby[: config.MAX_MAP_STATIONS]
@@ -190,8 +252,7 @@ def api_gas_price():
 
 @app.route("/api/widget-data")
 def api_widget_data():
-    lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
-    lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+    lat, lng = _resolve_location()
 
     # Stations
     nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)

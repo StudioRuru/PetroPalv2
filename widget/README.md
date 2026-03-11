@@ -4,7 +4,11 @@
 
 1. **Widgy app** installed on your iOS device ([App Store](https://apps.apple.com/us/app/widgy-widgets-home-lock-watch/id1524540481))
 2. **PetroPal API** deployed and accessible (see main README)
-3. Your API server URL (e.g., `https://your-app.onrender.com`)
+3. Your API server URL (e.g., `https://petropalv2-production.up.railway.app`)
+
+## How GPS Works
+
+An **iOS Shortcut** sends your phone's GPS to the server once (and hourly via automation). The server remembers your location, so **widget URLs don't need coordinates**. See the [Setup Guide](SETUP_GUIDE.md) for full Shortcut setup instructions.
 
 ## Widget Setup
 
@@ -12,7 +16,8 @@
 
 1. Open Widgy and tap **Create New Widget**
 2. Select **Large** widget size
-3. Add the following layers:
+3. Run the **"PetroPal Refresh"** iOS Shortcut once (see [Setup Guide](SETUP_GUIDE.md#step-0-ios-shortcut-setup-do-this-first))
+4. Add the following layers:
 
 #### Layer 1: Background
 - Type: Rectangle
@@ -23,15 +28,15 @@
 #### Layer 2: Map Image
 - Type: Image
 - Source: Image > Web and Maps > URL
-- URL: `https://YOUR_SERVER/api/map-image?lat=YOUR_LAT&lng=YOUR_LNG`
+- URL: `https://YOUR_SERVER/api/map-image`
 - Position: top 75% of widget (x:4, y:4, w:356, h:126)
 - Corner radius: 12
-- **Tap Action**: Open URL → `https://www.google.com/maps/search/Petro-Canada/@{{location.latitude}},{{location.longitude}},13z`
+- **Tap Action**: Open URL → `https://www.google.com/maps/search/Petro-Canada/`
 
 #### Layer 3: Gas Price Text
 - Type: Text
 - Data source: **Endpoint** (tap the cube icon > select "Endpoint")
-- URL: `https://YOUR_SERVER/api/widget-data?lat=YOUR_LAT&lng=YOUR_LNG`
+- URL: `https://YOUR_SERVER/api/widget-data`
 - Tap "RUN", then select field: `gas_price.display`
 - Font: SF Pro Bold, 13pt, White
 
@@ -59,18 +64,22 @@
 
 ## Location Access
 
-Widgy's JS sandbox does **not** support `navigator.geolocation`. You have two options:
+GPS is handled server-side. The **"PetroPal Refresh" iOS Shortcut** sends your coordinates to `/api/update-location`, and all widget endpoints use the saved location automatically.
 
-- **Hardcode coordinates** in the URLs (e.g., `lat=43.874168&lng=-79.258543`)
-- **Use iOS Shortcuts** for automatic GPS -- see the [Setup Guide](SETUP_GUIDE.md#gps-via-ios-shortcuts) for the full shortcut steps
+- **First time**: Run the Shortcut manually once
+- **Ongoing**: The hourly automation keeps it updated
+- **Manual refresh**: Tap the refresh button on the widget to re-run the Shortcut
+- **Fallback**: You can still pass explicit `?lat=X&lng=Y` in any URL if needed
 
 ## Tap Actions
 
-- **Tap the map**: Opens Google Maps with a search for "Petro-Canada" near your location, showing all nearby stations
-- **Alternative**: Change the tap URL to navigate directly to the nearest station using the `nav_url` from the API
+- **Tap the map**: Opens Google Maps with a search for "Petro-Canada" near your location
+- **Tap the refresh icon**: Runs the "PetroPal Refresh" Shortcut to update GPS + data
+- **Alternative**: Change the map tap URL to navigate directly to the nearest station using the `nav_url` from the API
 
 ## Troubleshooting
 
-- **Map not loading**: Check that your `GOOGLE_MAPS_API_KEY` is valid and the Static Maps API is enabled
+- **Map not loading**: Check that your `GOOGLE_MAPS_API_KEY` is valid and the Static Maps API is enabled. Make sure the Shortcut has run at least once.
 - **Price showing N/A**: Gas Wizard may be temporarily unavailable; the API will serve cached data when possible
+- **Location wrong / shows Toronto**: Run the "PetroPal Refresh" Shortcut manually to send fresh GPS
 - **Widget not refreshing**: Widgy refreshes at minimum every 15 minutes; iOS may throttle background refreshes
