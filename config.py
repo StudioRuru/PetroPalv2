@@ -12,7 +12,7 @@ SEARCH_RADIUS_KM = float(os.getenv("SEARCH_RADIUS_KM", "10"))
 
 MAP_WIDTH = int(os.getenv("MAP_WIDTH", "600"))
 MAP_HEIGHT = int(os.getenv("MAP_HEIGHT", "400"))
-MAP_ZOOM = int(os.getenv("MAP_ZOOM", "14"))
+MAP_ZOOM = int(os.getenv("MAP_ZOOM", "16"))
 MAX_MAP_STATIONS = int(os.getenv("MAX_MAP_STATIONS", "3"))
 
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", "3600"))
