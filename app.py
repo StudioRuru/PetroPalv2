@@ -73,9 +73,11 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 def _get_intersection(lat, lng):
-    """Reverse-geocode a lat/lng to the nearest intersection name.
+    """Reverse-geocode a lat/lng to a two-street intersection label.
 
-    Uses result_type=intersection first, then street_address as fallback.
+    Calls the Geocoding API without result_type filters and extracts
+    the two nearest road/route names from the address components,
+    returning them as 'Street A & Street B'.
     Results are cached in memory since station locations don't change.
     """
     cache_key = f"{lat},{lng}"
@@ -85,29 +87,50 @@ def _get_intersection(lat, lng):
     if not config.GOOGLE_MAPS_API_KEY:
         return None
 
-    for result_type in ("intersection", "street_address", "route"):
-        try:
-            resp = http_requests.get(
-                "https://maps.googleapis.com/maps/api/geocode/json",
-                params={
-                    "latlng": cache_key,
-                    "result_type": result_type,
-                    "key": config.GOOGLE_MAPS_API_KEY,
-                },
-                timeout=5,
-            )
-            data = resp.json()
-            status = data.get("status", "")
-            if status not in ("OK", "ZERO_RESULTS"):
-                log.warning("Geocoding %s for %s: %s", result_type, cache_key, status)
-            if status == "OK" and data.get("results"):
+    try:
+        resp = http_requests.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={
+                "latlng": cache_key,
+                "key": config.GOOGLE_MAPS_API_KEY,
+            },
+            timeout=5,
+        )
+        data = resp.json()
+        status = data.get("status", "")
+        if status not in ("OK", "ZERO_RESULTS"):
+            log.warning("Geocoding for %s: %s", cache_key, status)
+
+        if status == "OK" and data.get("results"):
+            # Collect unique route names across all results
+            routes = []
+            seen = set()
+            for result in data["results"]:
+                for comp in result.get("address_components", []):
+                    if "route" in comp.get("types", []):
+                        name = comp.get("short_name", comp.get("long_name", ""))
+                        if name and name not in seen:
+                            seen.add(name)
+                            routes.append(name)
+                    if len(routes) >= 2:
+                        break
+                if len(routes) >= 2:
+                    break
+
+            if len(routes) >= 2:
+                label = f"{routes[0]} & {routes[1]}"
+            elif routes:
+                label = routes[0]
+            else:
+                # Fallback: first line of formatted address
                 full = data["results"][0].get("formatted_address", "")
                 label = full.split(",")[0] if full else None
-                if label:
-                    _intersection_cache[cache_key] = label
-                    return label
-        except Exception as e:
-            log.warning("Geocoding error for %s: %s", cache_key, e)
+
+            if label:
+                _intersection_cache[cache_key] = label
+                return label
+    except Exception as e:
+        log.warning("Geocoding error for %s: %s", cache_key, e)
 
     _intersection_cache[cache_key] = None
     return None
@@ -286,9 +309,18 @@ def health():
 
 @app.route("/api/debug/geocode")
 def api_debug_geocode():
-    """Debug endpoint: test reverse geocoding for a given lat/lng."""
+    """Debug endpoint: test reverse geocoding for a given lat/lng.
+
+    Also shows the raw route components found, so you can verify the
+    intersection label is correct.
+    """
     lat = request.args.get("lat", config.DEFAULT_LAT, type=float)
     lng = request.args.get("lng", config.DEFAULT_LNG, type=float)
+
+    # Clear cache for this coord so we get a fresh result
+    cache_key = f"{lat},{lng}"
+    _intersection_cache.pop(cache_key, None)
+
     intersection = _get_intersection(lat, lng)
     street = _street_from_address(
         next(
@@ -297,6 +329,27 @@ def api_debug_geocode():
             "",
         )
     )
+
+    # Also show raw geocoding data for debugging
+    raw_routes = []
+    if config.GOOGLE_MAPS_API_KEY:
+        try:
+            resp = http_requests.get(
+                "https://maps.googleapis.com/maps/api/geocode/json",
+                params={"latlng": cache_key, "key": config.GOOGLE_MAPS_API_KEY},
+                timeout=5,
+            )
+            data = resp.json()
+            for result in data.get("results", [])[:5]:
+                for comp in result.get("address_components", []):
+                    if "route" in comp.get("types", []):
+                        raw_routes.append({
+                            "short_name": comp.get("short_name"),
+                            "long_name": comp.get("long_name"),
+                        })
+        except Exception:
+            pass
+
     return jsonify({
         "lat": lat,
         "lng": lng,
@@ -304,6 +357,7 @@ def api_debug_geocode():
         "geocoded_intersection": intersection,
         "address_fallback": street,
         "final_label": intersection or street or "Petro-Canada",
+        "raw_routes_found": raw_routes,
     })
 
 
