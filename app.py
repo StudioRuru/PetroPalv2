@@ -267,6 +267,9 @@ def _trend_color(trend):
 
 def _resolve_location():
     """Resolve lat/lng from query params, device_id lookup, or defaults."""
+    # Reload from disk so all gunicorn workers see the latest state
+    _load_device_locations()
+
     device_id = request.args.get("device_id") or request.args.get("device")
     lat = request.args.get("lat", type=float)
     lng = request.args.get("lng", type=float)
@@ -604,6 +607,9 @@ def api_debug_state():
 
 def _resolve_fuel_type():
     """Resolve fuel type from query param or device preference."""
+    # Reload from disk so all gunicorn workers see the latest state
+    _load_fuel_preferences()
+
     explicit = request.args.get("fuel")
     if explicit and explicit.lower() in _FUEL_TYPES:
         return explicit.lower()
