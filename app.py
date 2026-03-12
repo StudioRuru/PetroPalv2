@@ -28,9 +28,26 @@ _intersection_cache = {}
 _device_locations = {}
 
 # Fuel type preference per device: { device_id: "regular" | "premium" }
+# Persisted to disk so preferences survive server restarts.
 _fuel_preferences = {}
 _FUEL_TYPES = ["regular", "premium"]
 _FUEL_LABELS = {"regular": "87", "premium": "91"}
+
+
+def _load_fuel_preferences():
+    """Load saved fuel preferences from disk into memory."""
+    global _fuel_preferences
+    try:
+        with open(config.FUEL_PREFERENCES_FILE, "r") as f:
+            _fuel_preferences = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        _fuel_preferences = {}
+
+
+def _save_fuel_preferences():
+    """Persist fuel preferences to disk."""
+    with open(config.FUEL_PREFERENCES_FILE, "w") as f:
+        json.dump(_fuel_preferences, f, indent=2)
 
 
 def _load_device_locations():
@@ -49,8 +66,9 @@ def _save_device_locations():
         json.dump(_device_locations, f, indent=2)
 
 
-# Load any previously saved locations on startup
+# Load any previously saved data on startup
 _load_device_locations()
+_load_fuel_preferences()
 
 
 def _load_stations():
@@ -335,6 +353,7 @@ def api_toggle_fuel():
         new_fuel = _FUEL_TYPES[(idx + 1) % len(_FUEL_TYPES)]
 
     _fuel_preferences[device_id] = new_fuel
+    _save_fuel_preferences()
 
     return jsonify({
         "status": "ok",

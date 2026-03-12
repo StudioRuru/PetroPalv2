@@ -26,6 +26,7 @@ GAS_WIZARD_URL = "https://gaswizard.ca/gas-prices/toronto/"
 
 STATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "petro_canada_stations.json")
 DEVICE_LOCATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "device_locations.json")
+FUEL_PREFERENCES_FILE = os.path.join(os.path.dirname(__file__), "data", "fuel_preferences.json")
 
 FLASK_DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 FLASK_PORT = int(os.getenv("FLASK_PORT", "5000"))
