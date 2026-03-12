@@ -799,21 +799,19 @@ def _compute_widget_data():
     top_stations = nearby[: config.MAX_MAP_STATIONS]
     map_url = _build_static_map_url(lat, lng, top_stations)
 
-    # Build list of nearest stations for display (with brand name in text)
+    # Build list of nearest stations for display
     nearest_list = []
     for n in top_stations:
         intersection = _get_intersection(n["lat"], n["lng"])
         if not intersection:
             intersection = _street_from_address(n.get("address", ""))
-        label = intersection if intersection else brand_label
+        label = intersection if intersection else n["name"]
         nearest_list.append(
             {
                 "name": n["name"],
-                "brand": brand,
-                "brand_label": brand_label,
                 "intersection": label,
                 "distance_km": n["distance_km"],
-                "display": f"{brand_label} - {label} ({n['distance_km']} km)",
+                "display": f"{label} ({n['distance_km']} km)",
                 "nav_url": n["nav_url"],
             }
         )

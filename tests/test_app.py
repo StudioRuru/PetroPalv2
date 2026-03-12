@@ -11,12 +11,15 @@ import config
 # Set a test API key so URL builder doesn't return None
 config.GOOGLE_MAPS_API_KEY = "TEST_KEY"
 
-from app import app, haversine, _get_nearby_stations, _build_static_map_url, _BRANDS, _BRAND_LABELS
+from app import app, haversine, _get_nearby_stations, _build_static_map_url, _BRANDS, _BRAND_LABELS, _brand_preferences, _save_brand_preferences
 
 
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
+    # Reset brand preference so tests start from default (petro-canada)
+    _brand_preferences.clear()
+    _save_brand_preferences()
     with app.test_client() as client:
         yield client
 
@@ -184,11 +187,8 @@ class TestWidgetDataEndpoint:
         assert len(data["stations"]["top"]) <= 3
         if data["stations"]["top"]:
             assert "name" in data["stations"]["top"][0]
-            assert "brand_label" in data["stations"]["top"][0]
             assert "distance_km" in data["stations"]["top"][0]
             assert "nav_url" in data["stations"]["top"][0]
-            # Station display should include brand name
-            assert "Petro-Canada" in data["stations"]["top"][0]["display"]
 
 
 class TestBrandToggleEndpoint:
@@ -259,5 +259,3 @@ class TestMultiBrandStations:
         data = resp.get_json()
         assert data["brand"]["key"] == "esso"
         assert data["brand"]["label"] == "Esso"
-        if data["stations"]["top"]:
-            assert "Esso" in data["stations"]["top"][0]["display"]
