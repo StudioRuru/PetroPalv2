@@ -13,10 +13,13 @@ from flask_cors import CORS
 import config
 from scraper.gasbuddy import clear_cache as clear_price_cache, debug_scrape, get_tomorrow_gas_price
 
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
+
+log.info("PetroPal app module loading...")
 
 # In-memory station cache
 _stations = None
@@ -425,6 +428,11 @@ def api_fuel_type():
         "fuel_type": current,
         "fuel_label": _FUEL_LABELS.get(current, "Regular"),
     })
+
+
+@app.route("/")
+def index():
+    return jsonify({"status": "ok", "app": "PetroPal"})
 
 
 @app.route("/health")
