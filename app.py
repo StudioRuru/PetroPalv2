@@ -3,7 +3,6 @@
 import json
 import logging
 import math
-import os
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -67,12 +66,6 @@ def _save_device_locations():
     with open(config.DEVICE_LOCATIONS_FILE, "w") as f:
         json.dump(_device_locations, f, indent=2)
 
-
-# Ensure persistent data directory exists (for Railway volume mounts)
-try:
-    os.makedirs(config.DATA_DIR, exist_ok=True)
-except OSError:
-    pass  # Fall back gracefully if directory can't be created
 
 # Load any previously saved data on startup
 _load_device_locations()
