@@ -586,7 +586,6 @@ def api_widget_data():
                 "date": date_short,
                 "fuel_type": fuel,
                 "fuel_label": fuel_label,
-                "tomorrow_label": f"Tomorrow ({fuel_label}):",
             },
             "stations": {
                 "count": len(nearby),

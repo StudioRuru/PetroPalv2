@@ -37,12 +37,8 @@
     {
       "type": "text",
       "name": "Tomorrow Label",
-      "_comment": "Dynamic label showing fuel type: 'Tomorrow (87):' or 'Tomorrow (91):'",
-      "position": {"x": 28, "y": 132, "width": 100, "height": 18},
-      "data_source": {
-        "type": "endpoint",
-        "field": "gas_price.tomorrow_label"
-      },
+      "position": {"x": 28, "y": 132, "width": 70, "height": 18},
+      "text": "Tomorrow:",
       "style": {
         "font": "SF Pro",
         "font_weight": "regular",
@@ -51,23 +47,13 @@
       }
     },
     {
-      "type": "tap_action",
-      "name": "Fuel Toggle Tap Area",
-      "_comment": "In Widgy: Tap Action over the 'Tomorrow (87):' label. Runs the 'PetroPal Toggle Fuel' Shortcut to switch between 87/91.",
-      "position": {"x": 8, "y": 128, "width": 120, "height": 26},
-      "action": {
-        "type": "run_shortcut",
-        "shortcut_name": "PetroPal Toggle Fuel"
-      }
-    },
-    {
       "type": "text",
       "name": "Gas Price",
-      "_comment": "Use JavaScript data source (see setup step 4)",
-      "position": {"x": 128, "y": 132, "width": 80, "height": 18},
+      "_comment": "Use Endpoint data source, field: gas_price.display",
+      "position": {"x": 96, "y": 132, "width": 80, "height": 18},
       "data_source": {
-        "type": "javascript",
-        "code": "See setup step 4 - paste the Gas Price JavaScript"
+        "type": "endpoint",
+        "field": "gas_price.display"
       },
       "style": {
         "font": "SF Pro",
@@ -80,7 +66,7 @@
       "type": "text",
       "name": "Price Change (Red - Up)",
       "_comment": "Shows change only when price is going UP. Stack all 3 change layers at same position.",
-      "position": {"x": 208, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_red"
@@ -96,7 +82,7 @@
       "type": "text",
       "name": "Price Change (Green - Down)",
       "_comment": "Shows change only when price is going DOWN.",
-      "position": {"x": 208, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_green"
@@ -112,7 +98,7 @@
       "type": "text",
       "name": "Price Change (Gray - Stable)",
       "_comment": "Shows change only when price is STABLE.",
-      "position": {"x": 208, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_gray"
@@ -125,46 +111,30 @@
       }
     },
     {
-      "type": "symbol",
-      "name": "Pin Icon",
-      "position": {"x": 8, "y": 152, "width": 16, "height": 16},
-      "sf_symbol": "mappin.circle.fill",
+      "type": "text",
+      "name": "Fuel Grade",
+      "_comment": "Shows '87' or '91'. Tap to toggle between Regular and Premium.",
+      "position": {"x": 306, "y": 134, "width": 24, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "gas_price.fuel_label"
+      },
       "style": {
-        "tint_color": "#FF3B30"
+        "font": "SF Pro Mono",
+        "font_weight": "bold",
+        "font_size": 12,
+        "text_color": "#FF9500",
+        "text_alignment": "center"
       }
     },
     {
-      "type": "text",
-      "name": "Nearest Station",
-      "_comment": "Use JavaScript data source (see setup step 4)",
-      "position": {"x": 28, "y": 150, "width": 240, "height": 18},
-      "data_source": {
-        "type": "javascript",
-        "code": "See setup step 4 - paste the Nearest Station JavaScript"
-      },
-      "style": {
-        "font": "SF Pro",
-        "font_weight": "regular",
-        "font_size": 11,
-        "text_color": "#AEAEB2"
-      }
-    },
-    {
-      "type": "text",
-      "name": "Station Count",
-      "_comment": "Use JavaScript data source (see setup step 4)",
-      "position": {"x": 260, "y": 150, "width": 70, "height": 18},
-      "data_source": {
-        "type": "javascript",
-        "code": "See setup step 4 - paste the Station Count JavaScript"
-      },
-      "text_suffix": " nearby",
-      "style": {
-        "font": "SF Pro",
-        "font_weight": "regular",
-        "font_size": 11,
-        "text_color": "#8E8E93",
-        "text_alignment": "right"
+      "type": "tap_action",
+      "name": "Fuel Toggle Tap Area",
+      "_comment": "In Widgy: Tap Action over the fuel grade label. Runs 'PetroPal Toggle Fuel' Shortcut.",
+      "position": {"x": 300, "y": 128, "width": 36, "height": 26},
+      "action": {
+        "type": "run_shortcut",
+        "shortcut_name": "PetroPal Toggle Fuel"
       }
     },
     {
@@ -183,6 +153,49 @@
       "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon, set action to 'Reload Widget'",
       "position": {"x": 330, "y": 128, "width": 34, "height": 34},
       "action": "reload_widget"
+    },
+    {
+      "type": "symbol",
+      "name": "Pin Icon",
+      "position": {"x": 8, "y": 152, "width": 16, "height": 16},
+      "sf_symbol": "mappin.circle.fill",
+      "style": {
+        "tint_color": "#FF3B30"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Nearest Station",
+      "_comment": "Use Endpoint data source, field: stations.nearest",
+      "position": {"x": 28, "y": 150, "width": 240, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "stations.nearest"
+      },
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "regular",
+        "font_size": 11,
+        "text_color": "#AEAEB2"
+      }
+    },
+    {
+      "type": "text",
+      "name": "Station Count",
+      "_comment": "Use Endpoint data source, field: stations.count",
+      "position": {"x": 260, "y": 150, "width": 70, "height": 18},
+      "data_source": {
+        "type": "endpoint",
+        "field": "stations.count"
+      },
+      "text_suffix": " nearby",
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "regular",
+        "font_size": 11,
+        "text_color": "#8E8E93",
+        "text_alignment": "right"
+      }
     },
     {
       "type": "tap_action",
