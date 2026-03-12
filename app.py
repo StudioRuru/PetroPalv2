@@ -3,6 +3,7 @@
 import json
 import logging
 import math
+import time
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -33,6 +34,18 @@ _device_locations = {}
 _fuel_preferences = {}
 _FUEL_TYPES = ["regular", "premium"]
 _FUEL_LABELS = {"regular": "87", "premium": "91"}
+
+# Widget response snapshot cache.
+# Computed once per refresh cycle so ALL widget layers (text + map) see the
+# same location, fuel type, and price data — eliminates desync from latency.
+_widget_snapshot = {"data": None, "timestamp": 0}
+_WIDGET_SNAPSHOT_TTL = 120  # seconds — keep snapshot for 2 min
+
+
+def _invalidate_widget_snapshot():
+    """Clear the widget snapshot so the next request recomputes everything."""
+    _widget_snapshot["data"] = None
+    _widget_snapshot["timestamp"] = 0
 
 
 def _load_fuel_preferences():
@@ -318,6 +331,7 @@ def api_update_location():
         "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
     }
     _save_device_locations()
+    _invalidate_widget_snapshot()
 
     return jsonify({
         "status": "ok",
@@ -398,6 +412,7 @@ def api_toggle_fuel():
 
     _fuel_preferences[device_id] = new_fuel
     _save_fuel_preferences()
+    _invalidate_widget_snapshot()
 
     return jsonify({
         "status": "ok",
@@ -519,14 +534,11 @@ def api_map():
 def api_map_image():
     """Proxy the Google Static Map image and serve PNG bytes directly.
 
-    This avoids CORS and redirect issues when loading the map in Widgy's
-    JavaScript image layer.
+    Uses the same cached widget snapshot as /api/widget-data so the map
+    location is always consistent with the text data layers.
     """
-    lat, lng = _resolve_location()
-
-    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
-    top_stations = nearby[: config.MAX_MAP_STATIONS]
-    map_url = _build_static_map_url(lat, lng, top_stations)
+    snapshot = _get_widget_snapshot()
+    map_url = snapshot.get("map_url")
 
     if map_url is None:
         return jsonify({"error": "GOOGLE_MAPS_API_KEY is not configured"}), 500
@@ -546,6 +558,7 @@ def api_map_image():
 def api_clear_cache():
     """Clear the gas price cache, forcing a fresh scrape on next request."""
     clear_price_cache()
+    _invalidate_widget_snapshot()
     return jsonify({"status": "ok", "message": "Cache cleared"})
 
 
@@ -590,8 +603,8 @@ def api_gas_price():
     )
 
 
-@app.route("/api/widget-data")
-def api_widget_data():
+def _compute_widget_data():
+    """Build the full widget-data dict from current state."""
     lat, lng = _resolve_location()
 
     # Stations
@@ -602,7 +615,6 @@ def api_widget_data():
     # Build list of nearest stations for display
     nearest_list = []
     for n in top_stations:
-        # Try: reverse geocode intersection → address street name → station name
         intersection = _get_intersection(n["lat"], n["lng"])
         if not intersection:
             intersection = _street_from_address(n.get("address", ""))
@@ -621,25 +633,40 @@ def api_widget_data():
     fuel = _resolve_fuel_type()
     gas_price = _build_gas_price_block(fuel)
 
-    return jsonify(
-        {
-            "map_url": map_url,
-            "gas_price": gas_price,
-            "stations": {
-                "count": len(nearby),
-                "nearest": nearest_list[0]["display"] if nearest_list else None,
-                "station_1": nearest_list[0]["display"] if len(nearest_list) > 0 else " ",
-                "station_2": nearest_list[1]["display"] if len(nearest_list) > 1 else " ",
-                "station_3": nearest_list[2]["display"] if len(nearest_list) > 2 else " ",
-                "nav_url": nearest_list[0]["nav_url"] if nearest_list else None,
-                "top": nearest_list,
-            },
-            "meta": {
-                "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
-                "location": {"lat": lat, "lng": lng},
-            },
-        }
-    )
+    return {
+        "map_url": map_url,
+        "gas_price": gas_price,
+        "stations": {
+            "count": len(nearby),
+            "nearest": nearest_list[0]["display"] if nearest_list else None,
+            "station_1": nearest_list[0]["display"] if len(nearest_list) > 0 else " ",
+            "station_2": nearest_list[1]["display"] if len(nearest_list) > 1 else " ",
+            "station_3": nearest_list[2]["display"] if len(nearest_list) > 2 else " ",
+            "nav_url": nearest_list[0]["nav_url"] if nearest_list else None,
+            "top": nearest_list,
+        },
+        "meta": {
+            "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
+            "location": {"lat": lat, "lng": lng},
+        },
+    }
+
+
+def _get_widget_snapshot():
+    """Return cached widget data, recomputing if stale or invalidated."""
+    now = time.time()
+    if _widget_snapshot["data"] and (now - _widget_snapshot["timestamp"]) < _WIDGET_SNAPSHOT_TTL:
+        return _widget_snapshot["data"]
+
+    data = _compute_widget_data()
+    _widget_snapshot["data"] = data
+    _widget_snapshot["timestamp"] = now
+    return data
+
+
+@app.route("/api/widget-data")
+def api_widget_data():
+    return jsonify(_get_widget_snapshot())
 
 
 if __name__ == "__main__":
