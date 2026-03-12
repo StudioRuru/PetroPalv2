@@ -6,30 +6,42 @@ from scraper.gasbuddy import get_tomorrow_gas_price, _scrape_gas_wizard, _cache
 
 
 # Matches actual Gas Wizard format: "Regular: 160.9¢ (+2¢)"
+# Matches actual Gas Wizard format: label on one line, price on next
 SAMPLE_HTML = """
 <html>
 <body>
 <h1>Toronto Gas Prices</h1>
 <p>Wednesday - Mar 11, 2026</p>
-<div class="price-table">
-  <p>Regular: 160.9¢ (+2¢)</p>
-  <p>Premium: 190.9¢ (+2¢)</p>
-  <p>Diesel: 198.9¢ (-3¢)</p>
-</div>
+<ul>
+  <li>
+    Regular
+    160.9 (+2¢)
+    Premium
+    190.9 (+2¢)
+    Diesel
+    198.9 (-3¢)
+  </li>
+</ul>
 </body>
 </html>
 """
 
+# Uses Unicode minus sign (U+2212) like the real site
 SAMPLE_HTML_DOWN = """
 <html>
 <body>
 <h1>Toronto Gas Prices</h1>
 <p>Thursday - Mar 12, 2026</p>
-<div class="price-table">
-  <p>Regular: 157.9¢ (-3¢)</p>
-  <p>Premium: 187.9¢ (-3¢)</p>
-  <p>Diesel: 195.9¢ (-5¢)</p>
-</div>
+<ul>
+  <li>
+    Regular
+    157.9 (\u22123¢)
+    Premium
+    187.9 (\u22123¢)
+    Diesel
+    195.9 (\u22125¢)
+  </li>
+</ul>
 </body>
 </html>
 """

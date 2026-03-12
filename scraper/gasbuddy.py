@@ -107,10 +107,17 @@ def _scrape_gas_wizard():
     if date_match:
         date_str = date_match.group(0).strip()
 
-    # Parse all fuel type rows: "Regular: 153.9¢ (-7¢)"
+    # Parse fuel types and their prices.
+    # Actual Gas Wizard format (multiline):
+    #   Regular
+    #   159.9 (+6¢)
+    #   Premium
+    #   189.9 (+6¢)
+    # Note: minus sign can be − (U+2212) or - (hyphen)
     fuel_pattern = re.compile(
-        r'(Regular|Premium|Diesel)\s*:\s*(\d{3}(?:\.\d)?)\s*[¢c]'
-        r'\s*\(\s*([+-]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
+        r'(Regular|Premium|Diesel)\s+'
+        r'(\d{3}(?:\.\d)?)\s*'
+        r'\(\s*([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
         re.IGNORECASE,
     )
 
@@ -120,7 +127,8 @@ def _scrape_gas_wizard():
     for match in fuel_pattern.finditer(text):
         fuel_name = match.group(1).lower()
         price = float(match.group(2))
-        change = float(match.group(3).replace(" ", ""))
+        # Replace Unicode minus (U+2212) with standard hyphen for float()
+        change = float(match.group(3).replace(" ", "").replace("\u2212", "-"))
 
         if change > 0:
             trend = "up"
