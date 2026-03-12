@@ -180,7 +180,7 @@ def _parse_day_blocks(text):
                 "scraped_at": scraped_at,
             }
 
-        day_blocks.append((date_str, parsed_date, fuels))
+        day_blocks.append((date_str, parsed_date, fuels, block_text[:500]))
 
     return day_blocks
 
@@ -193,15 +193,15 @@ def _select_block(day_blocks):
     tomorrow = _get_tomorrow_date()
     today = tomorrow - timedelta(days=1)
 
-    for date_str, parsed_date, fuels in day_blocks:
+    for date_str, parsed_date, fuels, _text in day_blocks:
         if fuels and parsed_date == tomorrow:
             return f"matched tomorrow ({tomorrow})", fuels
 
-    for date_str, parsed_date, fuels in day_blocks:
+    for date_str, parsed_date, fuels, _text in day_blocks:
         if fuels and parsed_date == today:
             return f"matched today ({today})", fuels
 
-    for date_str, parsed_date, fuels in day_blocks:
+    for date_str, parsed_date, fuels, _text in day_blocks:
         if fuels:
             return "fallback to first block with prices", fuels
 
@@ -227,8 +227,9 @@ def debug_scrape():
                 "fuel_count": len(fuels),
                 "regular_price": fuels.get("regular", {}).get("price"),
                 "regular_change": fuels.get("regular", {}).get("change"),
+                "raw_text": block_text,
             }
-            for date_str, parsed_date, fuels in day_blocks
+            for date_str, parsed_date, fuels, block_text in day_blocks
         ],
         "selection_reason": reason,
         "selected_regular_price": selected.get("regular", {}).get("price") if selected else None,
