@@ -23,6 +23,12 @@ _cache = {
 }
 
 
+def clear_cache():
+    """Clear the in-memory price cache, forcing a fresh scrape on next request."""
+    _cache["data"] = None
+    _cache["timestamp"] = 0
+
+
 def get_tomorrow_gas_price(fuel_type="regular"):
     """Fetch tomorrow's predicted gas price for Toronto from Gas Wizard.
 
