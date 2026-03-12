@@ -3,6 +3,7 @@
 import json
 import logging
 import math
+import os
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -66,6 +67,9 @@ def _save_device_locations():
     with open(config.DEVICE_LOCATIONS_FILE, "w") as f:
         json.dump(_device_locations, f, indent=2)
 
+
+# Ensure persistent data directory exists (for Railway volume mounts)
+os.makedirs(config.DATA_DIR, exist_ok=True)
 
 # Load any previously saved data on startup
 _load_device_locations()
@@ -396,7 +400,7 @@ def api_toggle_fuel():
     if explicit and explicit.lower() in _FUEL_TYPES:
         new_fuel = explicit.lower()
     else:
-        current = _fuel_preferences.get(device_id, "regular")
+        current = _fuel_preferences.get(device_id, config.DEFAULT_FUEL_TYPE)
         idx = _FUEL_TYPES.index(current) if current in _FUEL_TYPES else 0
         new_fuel = _FUEL_TYPES[(idx + 1) % len(_FUEL_TYPES)]
 
@@ -420,7 +424,7 @@ def api_fuel_type():
         or request.args.get("device")
         or "default"
     )
-    current = _fuel_preferences.get(device_id, "regular")
+    current = _fuel_preferences.get(device_id, config.DEFAULT_FUEL_TYPE)
     return jsonify({
         "fuel_type": current,
         "fuel_label": _FUEL_LABELS.get(current, "Regular"),
@@ -558,7 +562,7 @@ def api_debug_scrape():
 @app.route("/api/debug-state")
 def api_debug_state():
     """Show the full server state: saved locations, fuel prefs, and current prices."""
-    fuel = _fuel_preferences.get("default", "regular")
+    fuel = _fuel_preferences.get("default", config.DEFAULT_FUEL_TYPE)
     price_data = get_tomorrow_gas_price(fuel)
     return jsonify({
         "device_locations": _device_locations,
@@ -589,7 +593,7 @@ def _resolve_fuel_type():
         or request.args.get("device")
         or "default"
     )
-    return _fuel_preferences.get(device_id, "regular")
+    return _fuel_preferences.get(device_id, config.DEFAULT_FUEL_TYPE)
 
 
 @app.route("/api/gas-price")

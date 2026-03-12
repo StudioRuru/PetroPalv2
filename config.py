@@ -24,9 +24,17 @@ TIMEZONE = os.getenv("TIMEZONE", "America/Toronto")
 
 GAS_WIZARD_URL = "https://gaswizard.ca/gas-prices/toronto/"
 
+# Default fuel type — survives deploys via env var even without persistent storage.
+DEFAULT_FUEL_TYPE = os.getenv("DEFAULT_FUEL_TYPE", "regular")
+
+# Persistent data directory. Set DATA_DIR to a Railway volume mount (e.g., "/data")
+# so that device locations and fuel preferences survive deploys.
+# Falls back to the local data/ directory (ephemeral on Railway).
+DATA_DIR = os.getenv("DATA_DIR", os.path.join(os.path.dirname(__file__), "data"))
+
 STATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "petro_canada_stations.json")
-DEVICE_LOCATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "device_locations.json")
-FUEL_PREFERENCES_FILE = os.path.join(os.path.dirname(__file__), "data", "fuel_preferences.json")
+DEVICE_LOCATIONS_FILE = os.path.join(DATA_DIR, "device_locations.json")
+FUEL_PREFERENCES_FILE = os.path.join(DATA_DIR, "fuel_preferences.json")
 
 FLASK_DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 FLASK_PORT = int(os.getenv("FLASK_PORT", "5000"))
