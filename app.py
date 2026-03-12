@@ -196,6 +196,34 @@ def _get_intersection(lat, lng):
                 if len(routes) >= 2:
                     break
 
+            # If only one route found, try an intersection-type lookup
+            if len(routes) < 2:
+                try:
+                    resp2 = http_requests.get(
+                        "https://maps.googleapis.com/maps/api/geocode/json",
+                        params={
+                            "latlng": cache_key,
+                            "result_type": "intersection",
+                            "key": config.GOOGLE_MAPS_API_KEY,
+                        },
+                        timeout=5,
+                    )
+                    data2 = resp2.json()
+                    if data2.get("status") == "OK" and data2.get("results"):
+                        for result in data2["results"]:
+                            for comp in result.get("address_components", []):
+                                if "route" in comp.get("types", []):
+                                    name = comp.get("short_name", comp.get("long_name", ""))
+                                    if name and name not in seen:
+                                        seen.add(name)
+                                        routes.append(name)
+                                if len(routes) >= 2:
+                                    break
+                            if len(routes) >= 2:
+                                break
+                except Exception:
+                    pass
+
             if len(routes) >= 2:
                 label = f"{routes[0]} & {routes[1]}"
             elif routes:
@@ -803,6 +831,11 @@ def _compute_widget_data():
     nearest_list = []
     for n in top_stations:
         intersection = _get_intersection(n["lat"], n["lng"])
+        # If geocoding returned only one road, combine with the address street
+        if intersection and "&" not in intersection:
+            addr_street = _street_from_address(n.get("address", ""))
+            if addr_street and addr_street.lower() != intersection.lower():
+                intersection = f"{intersection} & {addr_street}"
         if not intersection:
             intersection = _street_from_address(n.get("address", ""))
         label = intersection if intersection else n["name"]
@@ -821,6 +854,10 @@ def _compute_widget_data():
     if cheapest:
         cheapest_brand_label = _BRAND_LABELS.get(cheapest["brand"], cheapest["name"])
         cheapest_intersection = _get_intersection(cheapest["lat"], cheapest["lng"])
+        if cheapest_intersection and "&" not in cheapest_intersection:
+            addr_street = _street_from_address(cheapest.get("address", ""))
+            if addr_street and addr_street.lower() != cheapest_intersection.lower():
+                cheapest_intersection = f"{cheapest_intersection} & {addr_street}"
         if not cheapest_intersection:
             cheapest_intersection = _street_from_address(cheapest.get("address", ""))
         cheapest_label = cheapest_intersection or cheapest_brand_label
