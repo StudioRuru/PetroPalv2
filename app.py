@@ -1,4 +1,4 @@
-"""PetroPal - Flask API for Petro-Canada station finder and gas price widget."""
+"""PetroPal - Flask API for multi-brand gas station finder and gas price widget."""
 
 import json
 import logging
@@ -21,8 +21,8 @@ CORS(app)
 
 log.info("PetroPal app module loading...")
 
-# In-memory station cache
-_stations = None
+# In-memory station cache: { brand_key: [stations] }
+_stations_by_brand = {}
 
 # Cache for reverse-geocoded intersection names: { "lat,lng": "Street1 & Street2" }
 _intersection_cache = {}
@@ -36,6 +36,16 @@ _device_locations = {}
 _fuel_preferences = {}
 _FUEL_TYPES = ["regular", "premium"]
 _FUEL_LABELS = {"regular": "87", "premium": "91"}
+
+# Brand preference per device: { device_id: "petro-canada" | "esso" | "shell" }
+# Persisted to disk so preferences survive server restarts.
+_brand_preferences = {}
+_BRANDS = ["petro-canada", "esso", "shell"]
+_BRAND_LABELS = {
+    "petro-canada": "Petro-Canada",
+    "esso": "Esso",
+    "shell": "Shell",
+}
 
 
 def _load_fuel_preferences():
@@ -52,6 +62,22 @@ def _save_fuel_preferences():
     """Persist fuel preferences to disk."""
     with open(config.FUEL_PREFERENCES_FILE, "w") as f:
         json.dump(_fuel_preferences, f, indent=2)
+
+
+def _load_brand_preferences():
+    """Load saved brand preferences from disk into memory."""
+    global _brand_preferences
+    try:
+        with open(config.BRAND_PREFERENCES_FILE, "r") as f:
+            _brand_preferences = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        _brand_preferences = {}
+
+
+def _save_brand_preferences():
+    """Persist brand preferences to disk."""
+    with open(config.BRAND_PREFERENCES_FILE, "w") as f:
+        json.dump(_brand_preferences, f, indent=2)
 
 
 def _load_device_locations():
@@ -73,19 +99,41 @@ def _save_device_locations():
 # Load any previously saved data on startup
 _load_device_locations()
 _load_fuel_preferences()
+_load_brand_preferences()
 
 # Clear gas price cache on startup so we always scrape fresh after deploy.
 # This ensures code changes (e.g., regex fixes) take effect immediately.
 clear_price_cache()
 
 
-def _load_stations():
-    """Load stations from the static JSON file (cached in memory)."""
-    global _stations
-    if _stations is None:
-        with open(config.STATIONS_FILE, "r") as f:
-            _stations = json.load(f)
-    return _stations
+def _load_stations(brand=None):
+    """Load stations for a specific brand (cached in memory).
+
+    If brand is None, loads the default Petro-Canada stations for
+    backwards compatibility.
+    """
+    if brand is None:
+        brand = "petro-canada"
+    if brand not in _stations_by_brand:
+        filepath = config.BRAND_STATIONS_FILES.get(brand, config.STATIONS_FILE)
+        try:
+            with open(filepath, "r") as f:
+                _stations_by_brand[brand] = json.load(f)
+        except FileNotFoundError:
+            log.warning("Station file not found for brand %s: %s", brand, filepath)
+            _stations_by_brand[brand] = []
+    return _stations_by_brand[brand]
+
+
+def _load_all_stations():
+    """Load stations for all brands and return a flat list with brand key attached."""
+    all_stations = []
+    for brand_key in _BRANDS:
+        for s in _load_stations(brand_key):
+            entry = dict(s)
+            entry["brand"] = brand_key
+            all_stations.append(entry)
+    return all_stations
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -181,9 +229,12 @@ def _street_from_address(address):
     return parts[0].strip()
 
 
-def _get_nearby_stations(lat, lng, radius_km):
-    """Return stations within radius_km of (lat, lng), sorted by distance."""
-    stations = _load_stations()
+def _get_nearby_stations(lat, lng, radius_km, brand=None):
+    """Return stations within radius_km of (lat, lng), sorted by distance.
+
+    If brand is provided, only returns stations for that brand.
+    """
+    stations = _load_stations(brand)
     nearby = []
     for s in stations:
         dist = haversine(lat, lng, s["lat"], s["lng"])
@@ -192,9 +243,10 @@ def _get_nearby_stations(lat, lng, radius_km):
                 {
                     "id": s["id"],
                     "name": s["name"],
+                    "brand": brand or "petro-canada",
                     "lat": s["lat"],
                     "lng": s["lng"],
-                    "address": s["address"],
+                    "address": s.get("address", "ON"),
                     "distance_km": round(dist, 1),
                     "nav_url": (
                         f"https://www.google.com/maps/dir/?api=1"
@@ -204,6 +256,23 @@ def _get_nearby_stations(lat, lng, radius_km):
             )
     nearby.sort(key=lambda x: x["distance_km"])
     return nearby
+
+
+def _get_cheapest_station(lat, lng, radius_km):
+    """Find the closest station across ALL brands within radius.
+
+    Since Gas Wizard provides city-wide prices (not per-brand), we compare
+    brand proximity as a proxy for convenience. This returns a dict with
+    the single closest station across all brands plus brand info.
+    """
+    closest = None
+    for brand_key in _BRANDS:
+        nearby = _get_nearby_stations(lat, lng, radius_km, brand=brand_key)
+        if nearby:
+            candidate = nearby[0]
+            if closest is None or candidate["distance_km"] < closest["distance_km"]:
+                closest = candidate
+    return closest
 
 
 def _build_static_map_url(lat, lng, stations):
@@ -433,6 +502,58 @@ def api_fuel_type():
     })
 
 
+@app.route("/api/toggle-brand", methods=["GET", "POST"])
+def api_toggle_brand():
+    """Toggle or set brand preference for a device.
+
+    - No 'brand' param: cycles petro-canada -> esso -> shell -> petro-canada
+    - With 'brand' param: sets to that specific brand
+    """
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or (request.get_json(silent=True) or {}).get("device_id")
+        or "default"
+    )
+    explicit = (
+        request.args.get("brand")
+        or (request.get_json(silent=True) or {}).get("brand")
+    )
+
+    if explicit and explicit.lower() in _BRANDS:
+        new_brand = explicit.lower()
+    else:
+        current = _brand_preferences.get(device_id, config.DEFAULT_BRAND)
+        idx = _BRANDS.index(current) if current in _BRANDS else 0
+        new_brand = _BRANDS[(idx + 1) % len(_BRANDS)]
+
+    _brand_preferences[device_id] = new_brand
+    _save_brand_preferences()
+
+    return jsonify({
+        "status": "ok",
+        "device_id": device_id,
+        "brand": new_brand,
+        "brand_label": _BRAND_LABELS[new_brand],
+    })
+
+
+@app.route("/api/brand")
+def api_brand():
+    """Return the current brand preference for a device."""
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or "default"
+    )
+    _load_brand_preferences()
+    current = _brand_preferences.get(device_id, config.DEFAULT_BRAND)
+    return jsonify({
+        "brand": current,
+        "brand_label": _BRAND_LABELS.get(current, "Petro-Canada"),
+    })
+
+
 @app.route("/")
 def index():
     return jsonify({"status": "ok", "app": "PetroPal"})
@@ -501,14 +622,17 @@ def api_debug_geocode():
 def api_stations():
     lat, lng = _resolve_location()
     radius = request.args.get("radius", config.SEARCH_RADIUS_KM, type=float)
+    brand = _resolve_brand()
 
-    nearby = _get_nearby_stations(lat, lng, radius)
+    nearby = _get_nearby_stations(lat, lng, radius, brand=brand)
     return jsonify(
         {
             "stations": nearby,
             "count": len(nearby),
             "center": {"lat": lat, "lng": lng},
             "radius_km": radius,
+            "brand": brand,
+            "brand_label": _BRAND_LABELS.get(brand, brand),
         }
     )
 
@@ -517,8 +641,9 @@ def api_stations():
 def api_map():
     lat, lng = _resolve_location()
     fmt = request.args.get("format", "redirect")
+    brand = _resolve_brand()
 
-    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
+    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM, brand=brand)
     top_stations = nearby[: config.MAX_MAP_STATIONS]
     map_url = _build_static_map_url(lat, lng, top_stations)
 
@@ -534,7 +659,8 @@ def api_map():
 def api_map_image():
     """Proxy the Google Static Map image and serve PNG bytes directly."""
     lat, lng = _resolve_location()
-    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
+    brand = _resolve_brand()
+    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM, brand=brand)
     top_stations = nearby[: config.MAX_MAP_STATIONS]
     map_url = _build_static_map_url(lat, lng, top_stations)
 
@@ -568,20 +694,24 @@ def api_debug_scrape():
 
 @app.route("/api/debug-state")
 def api_debug_state():
-    """Show the full server state: saved locations, fuel prefs, and current prices.
-
-    Also shows what widget-data would return for each fuel type so you can
-    verify the label and price match.
-    """
+    """Show the full server state: saved locations, fuel prefs, brand prefs, and current prices."""
     fuel = _fuel_preferences.get("default", config.DEFAULT_FUEL_TYPE)
+    brand = _brand_preferences.get("default", config.DEFAULT_BRAND)
     regular_block = _build_gas_price_block("regular")
     premium_block = _build_gas_price_block("premium")
     return jsonify({
         "device_locations": _device_locations,
         "fuel_preferences": _fuel_preferences,
+        "brand_preferences": _brand_preferences,
         "default_fuel_type_env": config.DEFAULT_FUEL_TYPE,
+        "default_brand_env": config.DEFAULT_BRAND,
         "resolved_fuel_type": fuel,
         "resolved_fuel_label": _FUEL_LABELS.get(fuel, "?"),
+        "resolved_brand": brand,
+        "resolved_brand_label": _BRAND_LABELS.get(brand, "?"),
+        "station_counts": {
+            b: len(_load_stations(b)) for b in _BRANDS
+        },
         "regular_price": {
             "label": "87",
             "price": regular_block.get("price"),
@@ -596,6 +726,7 @@ def api_debug_state():
         },
         "widget_would_show": {
             "fuel_label": _FUEL_LABELS.get(fuel, "?"),
+            "brand_label": _BRAND_LABELS.get(brand, "?"),
             "display": regular_block.get("display") if fuel == "regular" else premium_block.get("display"),
         },
         "default_location": {
@@ -619,6 +750,21 @@ def _resolve_fuel_type():
         or "default"
     )
     return _fuel_preferences.get(device_id, config.DEFAULT_FUEL_TYPE)
+
+
+def _resolve_brand():
+    """Resolve brand from query param or device preference."""
+    _load_brand_preferences()
+
+    explicit = request.args.get("brand")
+    if explicit and explicit.lower() in _BRANDS:
+        return explicit.lower()
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or "default"
+    )
+    return _brand_preferences.get(device_id, config.DEFAULT_BRAND)
 
 
 @app.route("/api/gas-price")
@@ -645,28 +791,56 @@ def api_gas_price():
 def _compute_widget_data():
     """Build the full widget-data dict from current state."""
     lat, lng = _resolve_location()
+    brand = _resolve_brand()
+    brand_label = _BRAND_LABELS.get(brand, "Petro-Canada")
 
-    # Stations
-    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM)
+    # Stations for selected brand
+    nearby = _get_nearby_stations(lat, lng, config.SEARCH_RADIUS_KM, brand=brand)
     top_stations = nearby[: config.MAX_MAP_STATIONS]
     map_url = _build_static_map_url(lat, lng, top_stations)
 
-    # Build list of nearest stations for display
+    # Build list of nearest stations for display (with brand name in text)
     nearest_list = []
     for n in top_stations:
         intersection = _get_intersection(n["lat"], n["lng"])
         if not intersection:
             intersection = _street_from_address(n.get("address", ""))
-        label = intersection if intersection else n["name"]
+        label = intersection if intersection else brand_label
         nearest_list.append(
             {
                 "name": n["name"],
+                "brand": brand,
+                "brand_label": brand_label,
                 "intersection": label,
                 "distance_km": n["distance_km"],
-                "display": f"{label} ({n['distance_km']} km)",
+                "display": f"{brand_label} - {label} ({n['distance_km']} km)",
                 "nav_url": n["nav_url"],
             }
         )
+
+    # Cheapest gas: find closest station across ALL brands
+    cheapest = _get_cheapest_station(lat, lng, config.SEARCH_RADIUS_KM)
+    if cheapest:
+        cheapest_brand_label = _BRAND_LABELS.get(cheapest["brand"], cheapest["name"])
+        cheapest_intersection = _get_intersection(cheapest["lat"], cheapest["lng"])
+        if not cheapest_intersection:
+            cheapest_intersection = _street_from_address(cheapest.get("address", ""))
+        cheapest_label = cheapest_intersection or cheapest_brand_label
+        cheapest_info = {
+            "brand": cheapest["brand"],
+            "brand_label": cheapest_brand_label,
+            "display": f"{cheapest_brand_label} - {cheapest_label} ({cheapest['distance_km']} km)",
+            "distance_km": cheapest["distance_km"],
+            "nav_url": cheapest["nav_url"],
+        }
+    else:
+        cheapest_info = {
+            "brand": None,
+            "brand_label": None,
+            "display": "No stations nearby",
+            "distance_km": None,
+            "nav_url": None,
+        }
 
     # Gas price
     fuel = _resolve_fuel_type()
@@ -675,6 +849,10 @@ def _compute_widget_data():
     return {
         "map_url": map_url,
         "gas_price": gas_price,
+        "brand": {
+            "key": brand,
+            "label": brand_label,
+        },
         "stations": {
             "count": len(nearby),
             "nearest": nearest_list[0]["display"] if nearest_list else None,
@@ -684,6 +862,7 @@ def _compute_widget_data():
             "nav_url": nearest_list[0]["nav_url"] if nearest_list else None,
             "top": nearest_list,
         },
+        "cheapest": cheapest_info,
         "meta": {
             "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
             "location": {"lat": lat, "lng": lng},

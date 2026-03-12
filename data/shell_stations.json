@@ -1,0 +1,992 @@
+[
+  {
+    "lat": 43.644263,
+    "lng": -79.394911,
+    "name": "Shell",
+    "address": "38, Spadina Avenue, Toronto, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-001"
+  },
+  {
+    "lat": 43.667539,
+    "lng": -79.444044,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-002"
+  },
+  {
+    "lat": 43.679388,
+    "lng": -79.390199,
+    "name": "Shell",
+    "address": "1077, Yonge Street, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-003"
+  },
+  {
+    "lat": 43.697427,
+    "lng": -79.329855,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-004"
+  },
+  {
+    "lat": 43.732411,
+    "lng": -79.268731,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-005"
+  },
+  {
+    "lat": 43.711746,
+    "lng": -79.377646,
+    "name": "Shell",
+    "address": "1800, Bayview Avenue, Toronto, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-006"
+  },
+  {
+    "lat": 43.769684,
+    "lng": -79.37629,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-007"
+  },
+  {
+    "lat": 43.884309,
+    "lng": -79.372294,
+    "name": "Shell",
+    "address": "Markham, ON",
+    "city": "Markham",
+    "province": "ON",
+    "id": "sh-008"
+  },
+  {
+    "lat": 43.743826,
+    "lng": -79.405963,
+    "name": "Shell",
+    "address": "4021, Yonge Street, North York, ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-009"
+  },
+  {
+    "lat": 43.57794,
+    "lng": -79.684447,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-010"
+  },
+  {
+    "lat": 43.587622,
+    "lng": -79.607473,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-011"
+  },
+  {
+    "lat": 43.624488,
+    "lng": -79.711822,
+    "name": "Shell",
+    "address": "745, Courtneypark Drive West, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-012"
+  },
+  {
+    "lat": 43.616484,
+    "lng": -79.641333,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-013"
+  },
+  {
+    "lat": 43.842604,
+    "lng": -79.392407,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-014"
+  },
+  {
+    "lat": 43.714306,
+    "lng": -79.455489,
+    "name": "Shell",
+    "address": "3070, Dufferin Street, North York, ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-015"
+  },
+  {
+    "lat": 43.732521,
+    "lng": -79.458331,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-016"
+  },
+  {
+    "lat": 43.796967,
+    "lng": -79.148582,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-017"
+  },
+  {
+    "lat": 43.818048,
+    "lng": -79.304054,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-018"
+  },
+  {
+    "lat": 43.70995,
+    "lng": -79.535006,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-019"
+  },
+  {
+    "lat": 43.743789,
+    "lng": -79.60805,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-020"
+  },
+  {
+    "lat": 43.740071,
+    "lng": -79.581057,
+    "name": "Shell",
+    "address": "1510, Albion Road, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-021"
+  },
+  {
+    "lat": 43.714052,
+    "lng": -79.270506,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-022"
+  },
+  {
+    "lat": 43.71641,
+    "lng": -79.627998,
+    "name": "Shell",
+    "address": "6990, Rexwood Road, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-023"
+  },
+  {
+    "lat": 43.828558,
+    "lng": -79.086831,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-024"
+  },
+  {
+    "lat": 43.760126,
+    "lng": -79.225971,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-025"
+  },
+  {
+    "lat": 43.755125,
+    "lng": -79.245979,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-026"
+  },
+  {
+    "lat": 43.89926,
+    "lng": -79.443053,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-027"
+  },
+  {
+    "lat": 43.838639,
+    "lng": -79.430261,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-028"
+  },
+  {
+    "lat": 43.77705,
+    "lng": -79.231497,
+    "name": "Shell",
+    "address": "1201, Markham Road, Scarborough, ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-029"
+  },
+  {
+    "lat": 43.871443,
+    "lng": -79.268444,
+    "name": "Shell",
+    "address": "5706, Highway 7, ON",
+    "city": "Markham",
+    "province": "ON",
+    "id": "sh-030"
+  },
+  {
+    "lat": 43.856781,
+    "lng": -79.305362,
+    "name": "Shell",
+    "address": "8330, Kennedy Road, ON",
+    "city": "Markham",
+    "province": "ON",
+    "id": "sh-031"
+  },
+  {
+    "lat": 43.850434,
+    "lng": -79.358799,
+    "name": "Shell",
+    "address": "8510, Woodbine Avenue, Markham, ON",
+    "city": "Markham",
+    "province": "ON",
+    "id": "sh-032"
+  },
+  {
+    "lat": 43.785707,
+    "lng": -79.564023,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-033"
+  },
+  {
+    "lat": 43.675182,
+    "lng": -79.557926,
+    "name": "Shell",
+    "address": "230, Lloyd Manor Road, Etobicoke, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-034"
+  },
+  {
+    "lat": 43.646255,
+    "lng": -79.705144,
+    "name": "Shell",
+    "address": "6985, Hurontario Street, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-035"
+  },
+  {
+    "lat": 43.766433,
+    "lng": -79.387471,
+    "name": "Shell",
+    "address": "2831, Bayview Avenue, North York, ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-036"
+  },
+  {
+    "lat": 43.778594,
+    "lng": -79.307038,
+    "name": "Shell",
+    "address": "3401, Sheppard Avenue East, Scarborough, ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-037"
+  },
+  {
+    "lat": 43.709546,
+    "lng": -79.333705,
+    "name": "Shell",
+    "address": "705, Don Mills Road, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-038"
+  },
+  {
+    "lat": 43.742643,
+    "lng": -79.309478,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-039"
+  },
+  {
+    "lat": 43.654832,
+    "lng": -79.363685,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-040"
+  },
+  {
+    "lat": 43.730152,
+    "lng": -79.467647,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-041"
+  },
+  {
+    "lat": 43.750288,
+    "lng": -79.549348,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-042"
+  },
+  {
+    "lat": 43.773427,
+    "lng": -79.443246,
+    "name": "Shell",
+    "address": "4926, Bathurst Street, North York, ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-043"
+  },
+  {
+    "lat": 43.619516,
+    "lng": -79.669124,
+    "name": "Shell",
+    "address": "5651, Hurontario Street, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-044"
+  },
+  {
+    "lat": 43.661701,
+    "lng": -79.728283,
+    "name": "Shell",
+    "address": "7756, Hurontario Street, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-045"
+  },
+  {
+    "lat": 43.592238,
+    "lng": -79.670023,
+    "name": "Shell",
+    "address": "795, Eglinton Avenue West, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-046"
+  },
+  {
+    "lat": 43.686272,
+    "lng": -79.607647,
+    "name": "Shell",
+    "address": "5869, Airport Road, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-047"
+  },
+  {
+    "lat": 43.719671,
+    "lng": -79.429539,
+    "name": "Shell",
+    "address": "3075, Bathurst Street, Toronto, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-048"
+  },
+  {
+    "lat": 43.830577,
+    "lng": -79.275559,
+    "name": "Shell",
+    "address": "5445, Steeles Avenue East, Scarborough, ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-049"
+  },
+  {
+    "lat": 43.885537,
+    "lng": -79.289731,
+    "name": "Shell",
+    "address": "9270, McCowan Road, Markham, ON",
+    "city": "Markham",
+    "province": "ON",
+    "id": "sh-050"
+  },
+  {
+    "lat": 43.792883,
+    "lng": -79.330638,
+    "name": "Shell",
+    "address": "3101, Victoria Park Avenue, Scarborough, ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-051"
+  },
+  {
+    "lat": 43.450399,
+    "lng": -79.759949,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-052"
+  },
+  {
+    "lat": 43.803247,
+    "lng": -79.192344,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-053"
+  },
+  {
+    "lat": 43.419249,
+    "lng": -79.717476,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-054"
+  },
+  {
+    "lat": 43.602183,
+    "lng": -79.54497,
+    "name": "Shell",
+    "address": "435, Brown's Line, Etobicoke, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-055"
+  },
+  {
+    "lat": 43.730412,
+    "lng": -79.22578,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-056"
+  },
+  {
+    "lat": 43.68803,
+    "lng": -79.283718,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-057"
+  },
+  {
+    "lat": 43.860175,
+    "lng": -79.014015,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-058"
+  },
+  {
+    "lat": 43.797543,
+    "lng": -79.283268,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-059"
+  },
+  {
+    "lat": 43.550016,
+    "lng": -79.616199,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-060"
+  },
+  {
+    "lat": 43.570729,
+    "lng": -79.660598,
+    "name": "Shell",
+    "address": "3685, Erindale Station Road, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-061"
+  },
+  {
+    "lat": 43.83402,
+    "lng": -79.521612,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-062"
+  },
+  {
+    "lat": 43.405775,
+    "lng": -79.807847,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-063"
+  },
+  {
+    "lat": 43.772472,
+    "lng": -79.626508,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-064"
+  },
+  {
+    "lat": 43.73465,
+    "lng": -79.420167,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-065"
+  },
+  {
+    "lat": 43.85183,
+    "lng": -79.022213,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-066"
+  },
+  {
+    "lat": 43.555106,
+    "lng": -79.646047,
+    "name": "Shell",
+    "address": "1209, Dundas Street West, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-067"
+  },
+  {
+    "lat": 43.601613,
+    "lng": -79.500395,
+    "name": "Shell",
+    "address": "2799, Lake Shore Boulevard West, Toronto, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-068"
+  },
+  {
+    "lat": 43.68231,
+    "lng": -79.472062,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-069"
+  },
+  {
+    "lat": 43.703565,
+    "lng": -79.476423,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-070"
+  },
+  {
+    "lat": 43.938571,
+    "lng": -79.480685,
+    "name": "Shell",
+    "address": "12985, Bathurst Street, Richmond Hill, ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-071"
+  },
+  {
+    "lat": 43.740765,
+    "lng": -79.773749,
+    "name": "Shell",
+    "address": "490, Great Lakes Drive, Brampton, ON",
+    "city": "Brampton",
+    "province": "ON",
+    "id": "sh-072"
+  },
+  {
+    "lat": 43.883462,
+    "lng": -79.467939,
+    "name": "Shell",
+    "address": "10700, Bathurst Street, Maple, ON",
+    "city": "Maple",
+    "province": "ON",
+    "id": "sh-073"
+  },
+  {
+    "lat": 43.488674,
+    "lng": -79.719529,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-074"
+  },
+  {
+    "lat": 43.654522,
+    "lng": -79.647295,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-075"
+  },
+  {
+    "lat": 43.68541,
+    "lng": -79.808589,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-076"
+  },
+  {
+    "lat": 43.787053,
+    "lng": -79.257571,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-077"
+  },
+  {
+    "lat": 43.745145,
+    "lng": -79.486879,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-078"
+  },
+  {
+    "lat": 43.730964,
+    "lng": -79.75983,
+    "name": "Shell",
+    "address": "5, Great Lakes Drive, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-079"
+  },
+  {
+    "lat": 43.763257,
+    "lng": -79.721354,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-080"
+  },
+  {
+    "lat": 43.748396,
+    "lng": -79.726641,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-081"
+  },
+  {
+    "lat": 43.791387,
+    "lng": -79.761095,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-082"
+  },
+  {
+    "lat": 43.721262,
+    "lng": -79.509007,
+    "name": "Shell",
+    "address": "1570, Wilson Avenue, North York, ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-083"
+  },
+  {
+    "lat": 43.642818,
+    "lng": -79.576666,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-084"
+  },
+  {
+    "lat": 43.637224,
+    "lng": -79.539531,
+    "name": "Shell",
+    "address": "5286, Dundas Street West, ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-085"
+  },
+  {
+    "lat": 43.879578,
+    "lng": -79.026176,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-086"
+  },
+  {
+    "lat": 43.805956,
+    "lng": -79.277973,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-087"
+  },
+  {
+    "lat": 43.627435,
+    "lng": -79.499026,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-088"
+  },
+  {
+    "lat": 43.818979,
+    "lng": -79.116058,
+    "name": "Shell",
+    "address": "690, Kingston Road, ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-089"
+  },
+  {
+    "lat": 43.753962,
+    "lng": -79.684582,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-090"
+  },
+  {
+    "lat": 43.876354,
+    "lng": -79.41589,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-091"
+  },
+  {
+    "lat": 43.724828,
+    "lng": -79.742177,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-092"
+  },
+  {
+    "lat": 43.85707,
+    "lng": -79.042298,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-093"
+  },
+  {
+    "lat": 43.752181,
+    "lng": -79.45761,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-094"
+  },
+  {
+    "lat": 43.690025,
+    "lng": -79.576465,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-095"
+  },
+  {
+    "lat": 43.897664,
+    "lng": -79.030022,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Scarborough",
+    "province": "ON",
+    "id": "sh-096"
+  },
+  {
+    "lat": 43.702417,
+    "lng": -79.441522,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-097"
+  },
+  {
+    "lat": 43.933632,
+    "lng": -79.507865,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-098"
+  },
+  {
+    "lat": 43.830775,
+    "lng": -79.018541,
+    "name": "Shell",
+    "address": "915, Westney Road South, Ajax, ON",
+    "city": "Ajax",
+    "province": "ON",
+    "id": "sh-099"
+  },
+  {
+    "lat": 43.6485,
+    "lng": -79.549347,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Toronto",
+    "province": "ON",
+    "id": "sh-100"
+  },
+  {
+    "lat": 43.625711,
+    "lng": -79.566966,
+    "name": "Shell",
+    "address": "2163, Dundas Street East, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-101"
+  },
+  {
+    "lat": 43.754853,
+    "lng": -79.757368,
+    "name": "Shell",
+    "address": "10511, Bramalea Road, Brampton, ON",
+    "city": "Brampton",
+    "province": "ON",
+    "id": "sh-102"
+  },
+  {
+    "lat": 43.850059,
+    "lng": -79.536104,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-103"
+  },
+  {
+    "lat": 43.861891,
+    "lng": -79.387392,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-104"
+  },
+  {
+    "lat": 43.623708,
+    "lng": -79.587605,
+    "name": "Shell",
+    "address": "1715, Bloor Street, Mississauga, ON",
+    "city": "Mississauga",
+    "province": "ON",
+    "id": "sh-105"
+  },
+  {
+    "lat": 43.851821,
+    "lng": -79.700603,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Vaughan",
+    "province": "ON",
+    "id": "sh-106"
+  },
+  {
+    "lat": 43.823474,
+    "lng": -79.479116,
+    "name": "Shell",
+    "address": "ON",
+    "city": "Richmond Hill",
+    "province": "ON",
+    "id": "sh-107"
+  },
+  {
+    "lat": 43.819295,
+    "lng": -79.220381,
+    "name": "Shell",
+    "address": "ON",
+    "city": "North York",
+    "province": "ON",
+    "id": "sh-108"
+  },
+  {
+    "lat": 43.574602,
+    "lng": -79.833705,
+    "name": "Shell",
+    "address": "7975, Trafalgar Road, Halton Hills, ON",
+    "city": "Halton Hills",
+    "province": "ON",
+    "id": "sh-109"
+  },
+  {
+    "lat": 43.711221,
+    "lng": -79.567091,
+    "name": "Shell",
+    "address": "135, Rexdale Boulevard, Etobicoke, ON",
+    "city": "Etobicoke",
+    "province": "ON",
+    "id": "sh-110"
+  }
+]

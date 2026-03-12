@@ -27,9 +27,23 @@ GAS_WIZARD_URL = "https://gaswizard.ca/gas-prices/toronto/"
 # Default fuel type — survives deploys via env var even without persistent storage.
 DEFAULT_FUEL_TYPE = os.getenv("DEFAULT_FUEL_TYPE", "regular")
 
-STATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "petro_canada_stations.json")
-DEVICE_LOCATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "device_locations.json")
-FUEL_PREFERENCES_FILE = os.path.join(os.path.dirname(__file__), "data", "fuel_preferences.json")
+_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+STATIONS_FILE = os.path.join(_DATA_DIR, "petro_canada_stations.json")
+ESSO_STATIONS_FILE = os.path.join(_DATA_DIR, "esso_stations.json")
+SHELL_STATIONS_FILE = os.path.join(_DATA_DIR, "shell_stations.json")
+
+BRAND_STATIONS_FILES = {
+    "petro-canada": STATIONS_FILE,
+    "esso": ESSO_STATIONS_FILE,
+    "shell": SHELL_STATIONS_FILE,
+}
+
+DEFAULT_BRAND = os.getenv("DEFAULT_BRAND", "petro-canada")
+
+DEVICE_LOCATIONS_FILE = os.path.join(_DATA_DIR, "device_locations.json")
+FUEL_PREFERENCES_FILE = os.path.join(_DATA_DIR, "fuel_preferences.json")
+BRAND_PREFERENCES_FILE = os.path.join(_DATA_DIR, "brand_preferences.json")
 
 FLASK_DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 FLASK_PORT = int(os.getenv("FLASK_PORT", "5000"))

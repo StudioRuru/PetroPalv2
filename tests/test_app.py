@@ -11,7 +11,7 @@ import config
 # Set a test API key so URL builder doesn't return None
 config.GOOGLE_MAPS_API_KEY = "TEST_KEY"
 
-from app import app, haversine, _get_nearby_stations, _build_static_map_url
+from app import app, haversine, _get_nearby_stations, _build_static_map_url, _BRANDS, _BRAND_LABELS
 
 
 @pytest.fixture
@@ -169,12 +169,95 @@ class TestWidgetDataEndpoint:
         assert "gas_price" in data
         assert "stations" in data
         assert "meta" in data
+        assert "brand" in data
+        assert "cheapest" in data
         assert data["gas_price"]["display"] == "160.9 c/L"
         assert data["gas_price"]["change_display"] == "+2.0c"
+        # Verify brand info
+        assert data["brand"]["key"] == "petro-canada"
+        assert data["brand"]["label"] == "Petro-Canada"
+        # Verify cheapest station info
+        assert "brand_label" in data["cheapest"]
+        assert "display" in data["cheapest"]
         # Verify top stations list (max 3 nearest)
         assert "top" in data["stations"]
         assert len(data["stations"]["top"]) <= 3
         if data["stations"]["top"]:
             assert "name" in data["stations"]["top"][0]
+            assert "brand_label" in data["stations"]["top"][0]
             assert "distance_km" in data["stations"]["top"][0]
             assert "nav_url" in data["stations"]["top"][0]
+            # Station display should include brand name
+            assert "Petro-Canada" in data["stations"]["top"][0]["display"]
+
+
+class TestBrandToggleEndpoint:
+    def test_toggle_cycles_brands(self, client):
+        # Start with default (petro-canada), toggle to esso
+        resp = client.get("/api/toggle-brand")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["brand"] == "esso"
+        assert data["brand_label"] == "Esso"
+
+        # Toggle again to shell
+        resp = client.get("/api/toggle-brand")
+        data = resp.get_json()
+        assert data["brand"] == "shell"
+        assert data["brand_label"] == "Shell"
+
+        # Toggle again back to petro-canada
+        resp = client.get("/api/toggle-brand")
+        data = resp.get_json()
+        assert data["brand"] == "petro-canada"
+        assert data["brand_label"] == "Petro-Canada"
+
+    def test_set_explicit_brand(self, client):
+        resp = client.get("/api/toggle-brand?brand=shell")
+        data = resp.get_json()
+        assert data["brand"] == "shell"
+        assert data["brand_label"] == "Shell"
+
+    def test_get_brand(self, client):
+        # Set brand first
+        client.get("/api/toggle-brand?brand=esso")
+        resp = client.get("/api/brand")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["brand"] == "esso"
+        assert data["brand_label"] == "Esso"
+
+
+class TestMultiBrandStations:
+    def test_esso_stations_load(self):
+        stations = _get_nearby_stations(43.6532, -79.3832, 10, brand="esso")
+        assert len(stations) > 0
+        for s in stations:
+            assert s["brand"] == "esso"
+
+    def test_shell_stations_load(self):
+        stations = _get_nearby_stations(43.6532, -79.3832, 10, brand="shell")
+        assert len(stations) > 0
+        for s in stations:
+            assert s["brand"] == "shell"
+
+    def test_petro_canada_default(self):
+        stations = _get_nearby_stations(43.6532, -79.3832, 10)
+        assert len(stations) > 0
+        for s in stations:
+            assert s["brand"] == "petro-canada"
+
+    @patch("app.get_tomorrow_gas_price")
+    def test_widget_data_with_esso(self, mock_price, client):
+        mock_price.return_value = {
+            "price": 160.9, "unit": "cents/litre", "change": 2.0,
+            "trend": "up", "date": "Mar 11", "source": "gaswizard.ca",
+        }
+        # Set brand to esso
+        client.get("/api/toggle-brand?brand=esso")
+        resp = client.get("/api/widget-data?lat=43.6532&lng=-79.3832")
+        data = resp.get_json()
+        assert data["brand"]["key"] == "esso"
+        assert data["brand"]["label"] == "Esso"
+        if data["stations"]["top"]:
+            assert "Esso" in data["stations"]["top"][0]["display"]
