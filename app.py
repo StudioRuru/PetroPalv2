@@ -69,7 +69,10 @@ def _save_device_locations():
 
 
 # Ensure persistent data directory exists (for Railway volume mounts)
-os.makedirs(config.DATA_DIR, exist_ok=True)
+try:
+    os.makedirs(config.DATA_DIR, exist_ok=True)
+except OSError:
+    pass  # Fall back gracefully if directory can't be created
 
 # Load any previously saved data on startup
 _load_device_locations()
