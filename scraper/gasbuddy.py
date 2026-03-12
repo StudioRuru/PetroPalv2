@@ -110,15 +110,8 @@ def _get_tomorrow_date():
     return (datetime.now(tz) + timedelta(days=1)).date()
 
 
-def _scrape_gas_wizard():
-    """Scrape Gas Wizard for tomorrow's Toronto gas prices (all fuel types).
-
-    Parses all date blocks on the page, then picks the one that matches
-    tomorrow in the configured timezone. Falls back to the first block
-    if no exact match is found.
-
-    Returns a dict keyed by fuel type: { "regular": {...}, "premium": {...}, ... }
-    """
+def _fetch_page_text():
+    """Fetch the Gas Wizard page and return the plain text."""
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -126,15 +119,17 @@ def _scrape_gas_wizard():
             "Chrome/120.0.0.0 Safari/537.36"
         )
     }
-
     resp = requests.get(config.GAS_WIZARD_URL, headers=headers, timeout=10)
     resp.raise_for_status()
-
     soup = BeautifulSoup(resp.text, "html.parser")
-    text = soup.get_text()
+    return soup.get_text()
 
-    # Split text into date blocks.
-    # Each block starts with a day name like "Friday - Mar 13, 2026"
+
+def _parse_day_blocks(text):
+    """Parse all date blocks from page text.
+
+    Returns a list of (date_str, parsed_date, {fuel_type: {...}}).
+    """
     date_header_pattern = re.compile(
         r'((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)'
         r'[,\s\-]+\w+\s+\d{1,2}(?:,?\s*\d{4})?)',
@@ -148,10 +143,7 @@ def _scrape_gas_wizard():
         re.IGNORECASE,
     )
 
-    # Find all date headers and their positions
     headers_found = list(date_header_pattern.finditer(text))
-
-    # Build a list of (date_str, parsed_date, {fuel_type: {...}}) for each block
     day_blocks = []
     scraped_at = datetime.now(timezone.utc).isoformat()
 
@@ -159,7 +151,6 @@ def _scrape_gas_wizard():
         date_str = hdr.group(0).strip()
         parsed_date = _parse_date_str(date_str)
 
-        # Extract the text between this header and the next (or end)
         start = hdr.end()
         end = headers_found[i + 1].start() if i + 1 < len(headers_found) else len(text)
         block_text = text[start:end]
@@ -189,28 +180,80 @@ def _scrape_gas_wizard():
                 "scraped_at": scraped_at,
             }
 
-        if fuels:
-            day_blocks.append((date_str, parsed_date, fuels))
+        day_blocks.append((date_str, parsed_date, fuels))
 
-    # Pick the block that matches tomorrow in the user's timezone
+    return day_blocks
+
+
+def _select_block(day_blocks):
+    """Pick the best date block for 'tomorrow' in the user's timezone.
+
+    Returns (selected_reason, selected_fuels) or (reason, None).
+    """
     tomorrow = _get_tomorrow_date()
-
-    for date_str, parsed_date, fuels in day_blocks:
-        if parsed_date == tomorrow:
-            return fuels
-
-    # If today's date matches a block, use that (it's "tomorrow's prediction"
-    # that hasn't rolled over yet from the user's perspective)
     today = tomorrow - timedelta(days=1)
-    for date_str, parsed_date, fuels in day_blocks:
-        if parsed_date == today:
-            return fuels
 
-    # Fallback: use the first block (newest prediction)
-    if day_blocks:
-        return day_blocks[0][2]
+    for date_str, parsed_date, fuels in day_blocks:
+        if fuels and parsed_date == tomorrow:
+            return f"matched tomorrow ({tomorrow})", fuels
+
+    for date_str, parsed_date, fuels in day_blocks:
+        if fuels and parsed_date == today:
+            return f"matched today ({today})", fuels
+
+    for date_str, parsed_date, fuels in day_blocks:
+        if fuels:
+            return "fallback to first block with prices", fuels
+
+    return "no blocks with prices found", None
+
+
+def debug_scrape():
+    """Scrape Gas Wizard and return full debug info about what was parsed."""
+    text = _fetch_page_text()
+    day_blocks = _parse_day_blocks(text)
+    tomorrow = _get_tomorrow_date()
+    today = tomorrow - timedelta(days=1)
+    reason, selected = _select_block(day_blocks)
+
+    return {
+        "timezone": config.TIMEZONE,
+        "today_in_tz": str(today),
+        "tomorrow_in_tz": str(tomorrow),
+        "blocks_found": [
+            {
+                "date_str": date_str,
+                "parsed_date": str(parsed_date),
+                "fuel_count": len(fuels),
+                "regular_price": fuels.get("regular", {}).get("price"),
+                "regular_change": fuels.get("regular", {}).get("change"),
+            }
+            for date_str, parsed_date, fuels in day_blocks
+        ],
+        "selection_reason": reason,
+        "selected_regular_price": selected.get("regular", {}).get("price") if selected else None,
+        "selected_regular_change": selected.get("regular", {}).get("change") if selected else None,
+    }
+
+
+def _scrape_gas_wizard():
+    """Scrape Gas Wizard for tomorrow's Toronto gas prices (all fuel types).
+
+    Parses all date blocks on the page, then picks the one that matches
+    tomorrow in the configured timezone. Falls back to the first block
+    if no exact match is found.
+
+    Returns a dict keyed by fuel type: { "regular": {...}, "premium": {...}, ... }
+    """
+    text = _fetch_page_text()
+    day_blocks = _parse_day_blocks(text)
+    _reason, selected = _select_block(day_blocks)
+
+    if selected:
+        return selected
 
     # Last resort: try the old broad parsing
+    scraped_at = datetime.now(timezone.utc).isoformat()
     return _fallback_parse(text, scraped_at)
 
 

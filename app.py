@@ -11,7 +11,7 @@ from flask import Flask, Response, jsonify, redirect, request
 from flask_cors import CORS
 
 import config
-from scraper.gasbuddy import clear_cache as clear_price_cache, get_tomorrow_gas_price
+from scraper.gasbuddy import clear_cache as clear_price_cache, debug_scrape, get_tomorrow_gas_price
 
 log = logging.getLogger(__name__)
 
@@ -503,6 +503,13 @@ def api_clear_cache():
     """Clear the gas price cache, forcing a fresh scrape on next request."""
     clear_price_cache()
     return jsonify({"status": "ok", "message": "Cache cleared"})
+
+
+@app.route("/api/debug-scrape")
+def api_debug_scrape():
+    """Show what the scraper sees: all date blocks, parsed dates, and selection logic."""
+    clear_price_cache()
+    return jsonify(debug_scrape())
 
 
 def _resolve_fuel_type():
