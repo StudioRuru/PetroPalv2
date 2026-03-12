@@ -561,20 +561,35 @@ def api_debug_scrape():
 
 @app.route("/api/debug-state")
 def api_debug_state():
-    """Show the full server state: saved locations, fuel prefs, and current prices."""
+    """Show the full server state: saved locations, fuel prefs, and current prices.
+
+    Also shows what widget-data would return for each fuel type so you can
+    verify the label and price match.
+    """
     fuel = _fuel_preferences.get("default", config.DEFAULT_FUEL_TYPE)
-    price_data = get_tomorrow_gas_price(fuel)
+    regular_block = _build_gas_price_block("regular")
+    premium_block = _build_gas_price_block("premium")
     return jsonify({
         "device_locations": _device_locations,
         "fuel_preferences": _fuel_preferences,
+        "default_fuel_type_env": config.DEFAULT_FUEL_TYPE,
         "resolved_fuel_type": fuel,
         "resolved_fuel_label": _FUEL_LABELS.get(fuel, "?"),
-        "current_price_data": {
-            "price": price_data.get("price"),
-            "change": price_data.get("change"),
-            "trend": price_data.get("trend"),
-            "fuel_type": price_data.get("fuel_type"),
-            "date": price_data.get("date"),
+        "regular_price": {
+            "label": "87",
+            "price": regular_block.get("price"),
+            "change": regular_block.get("change_display"),
+            "display": regular_block.get("display"),
+        },
+        "premium_price": {
+            "label": "91",
+            "price": premium_block.get("price"),
+            "change": premium_block.get("change_display"),
+            "display": premium_block.get("display"),
+        },
+        "widget_would_show": {
+            "fuel_label": _FUEL_LABELS.get(fuel, "?"),
+            "display": regular_block.get("display") if fuel == "regular" else premium_block.get("display"),
         },
         "default_location": {
             "lat": config.DEFAULT_LAT,
