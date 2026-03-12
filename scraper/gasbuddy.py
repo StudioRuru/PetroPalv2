@@ -137,7 +137,7 @@ def _parse_day_blocks(text):
     )
 
     fuel_pattern = re.compile(
-        r'(Regular|Premium|Diesel)\s+'
+        r'(Regular|Premium|Diesel)\s*'
         r'(\d{3}(?:\.\d)?)\s*'
         r'\(\s*([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
         re.IGNORECASE,
