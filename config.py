@@ -5,8 +5,8 @@ load_dotenv()
 
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
 
-DEFAULT_LAT = float(os.getenv("DEFAULT_LAT", "43.6532"))
-DEFAULT_LNG = float(os.getenv("DEFAULT_LNG", "-79.3832"))
+DEFAULT_LAT = float(os.getenv("DEFAULT_LAT", "43.8563"))
+DEFAULT_LNG = float(os.getenv("DEFAULT_LNG", "-79.3300"))
 
 SEARCH_RADIUS_KM = float(os.getenv("SEARCH_RADIUS_KM", "10"))
 
