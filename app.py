@@ -4,6 +4,7 @@ import json
 import logging
 import math
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import requests as http_requests
 from flask import Flask, Response, jsonify, redirect, request
@@ -314,7 +315,7 @@ def api_update_location():
     _device_locations[device_id] = {
         "lat": float(lat),
         "lng": float(lng),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
     }
     _save_device_locations()
 
@@ -616,7 +617,7 @@ def api_widget_data():
                 "top": nearest_list,
             },
             "meta": {
-                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(ZoneInfo(config.TIMEZONE)).isoformat(),
                 "location": {"lat": lat, "lng": lng},
             },
         }
