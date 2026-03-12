@@ -9,7 +9,8 @@ user-reported prices, not predictions.
 
 import re
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -76,10 +77,41 @@ def get_tomorrow_gas_price(fuel_type="regular"):
     }
 
 
+def _parse_date_str(date_str):
+    """Try to parse a date string like 'Friday - Mar 13, 2026' into a date object."""
+    # Strip day name prefix: "Friday - Mar 13, 2026" -> "Mar 13, 2026"
+    cleaned = re.sub(
+        r'^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)'
+        r'[\s,\-]+',
+        '', date_str, flags=re.IGNORECASE,
+    ).strip()
+
+    for fmt in ("%b %d, %Y", "%b %d %Y", "%b %d", "%B %d, %Y", "%B %d"):
+        try:
+            parsed = datetime.strptime(cleaned, fmt).date()
+            # If no year was in the format, assume current year
+            if parsed.year == 1900:
+                parsed = parsed.replace(year=datetime.now().year)
+            return parsed
+        except ValueError:
+            continue
+    return None
+
+
+def _get_tomorrow_date():
+    """Return tomorrow's date in the configured timezone."""
+    tz = ZoneInfo(config.TIMEZONE)
+    return (datetime.now(tz) + timedelta(days=1)).date()
+
+
 def _scrape_gas_wizard():
     """Scrape Gas Wizard for tomorrow's Toronto gas prices (all fuel types).
 
-    Returns a dict keyed by fuel type: { "regular": {...}, "premium": {...}, "diesel": {...} }
+    Parses all date blocks on the page, then picks the one that matches
+    tomorrow in the configured timezone. Falls back to the first block
+    if no exact match is found.
+
+    Returns a dict keyed by fuel type: { "regular": {...}, "premium": {...}, ... }
     """
     headers = {
         "User-Agent": (
@@ -95,9 +127,89 @@ def _scrape_gas_wizard():
     soup = BeautifulSoup(resp.text, "html.parser")
     text = soup.get_text()
 
-    # Find the tomorrow row — the first date line with prices
-    # Pattern: "Thursday - Mar 12, 2026:" or "Thursday, Mar 12:"
-    # followed by "Regular: 153.9¢ (-7¢)" etc.
+    # Split text into date blocks.
+    # Each block starts with a day name like "Friday - Mar 13, 2026"
+    date_header_pattern = re.compile(
+        r'((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)'
+        r'[,\s\-]+\w+\s+\d{1,2}(?:,?\s*\d{4})?)',
+        re.IGNORECASE,
+    )
+
+    fuel_pattern = re.compile(
+        r'(Regular|Premium|Diesel)\s+'
+        r'(\d{3}(?:\.\d)?)\s*'
+        r'\(\s*([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
+        re.IGNORECASE,
+    )
+
+    # Find all date headers and their positions
+    headers_found = list(date_header_pattern.finditer(text))
+
+    # Build a list of (date_str, parsed_date, {fuel_type: {...}}) for each block
+    day_blocks = []
+    scraped_at = datetime.now(timezone.utc).isoformat()
+
+    for i, hdr in enumerate(headers_found):
+        date_str = hdr.group(0).strip()
+        parsed_date = _parse_date_str(date_str)
+
+        # Extract the text between this header and the next (or end)
+        start = hdr.end()
+        end = headers_found[i + 1].start() if i + 1 < len(headers_found) else len(text)
+        block_text = text[start:end]
+
+        fuels = {}
+        for match in fuel_pattern.finditer(block_text):
+            fuel_name = match.group(1).lower()
+            price = float(match.group(2))
+            change = float(match.group(3).replace(" ", "").replace("\u2212", "-"))
+
+            if change > 0:
+                trend = "up"
+            elif change < 0:
+                trend = "down"
+            else:
+                trend = "stable"
+
+            fuels[fuel_name] = {
+                "price": price,
+                "unit": "cents/litre",
+                "currency": "CAD",
+                "change": change,
+                "trend": trend,
+                "date": date_str,
+                "fuel_type": fuel_name.capitalize(),
+                "source": "gaswizard.ca",
+                "scraped_at": scraped_at,
+            }
+
+        if fuels:
+            day_blocks.append((date_str, parsed_date, fuels))
+
+    # Pick the block that matches tomorrow in the user's timezone
+    tomorrow = _get_tomorrow_date()
+
+    for date_str, parsed_date, fuels in day_blocks:
+        if parsed_date == tomorrow:
+            return fuels
+
+    # If today's date matches a block, use that (it's "tomorrow's prediction"
+    # that hasn't rolled over yet from the user's perspective)
+    today = tomorrow - timedelta(days=1)
+    for date_str, parsed_date, fuels in day_blocks:
+        if parsed_date == today:
+            return fuels
+
+    # Fallback: use the first block (newest prediction)
+    if day_blocks:
+        return day_blocks[0][2]
+
+    # Last resort: try the old broad parsing
+    return _fallback_parse(text, scraped_at)
+
+
+def _fallback_parse(text, scraped_at):
+    """Fallback parser for when the structured parsing fails."""
     date_str = None
     date_match = re.search(
         r'(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)'
@@ -107,73 +219,30 @@ def _scrape_gas_wizard():
     if date_match:
         date_str = date_match.group(0).strip()
 
-    # Parse fuel types and their prices.
-    # Actual Gas Wizard format (multiline):
-    #   Regular
-    #   159.9 (+6¢)
-    #   Premium
-    #   189.9 (+6¢)
-    # Note: minus sign can be − (U+2212) or - (hyphen)
-    fuel_pattern = re.compile(
-        r'(Regular|Premium|Diesel)\s+'
-        r'(\d{3}(?:\.\d)?)\s*'
-        r'\(\s*([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
-        re.IGNORECASE,
-    )
+    price = None
+    change = None
 
-    scraped_at = datetime.now(timezone.utc).isoformat()
-    result = {}
+    price_match = re.search(r'(\d{3}(?:\.\d)?)\s*[¢c]', text)
+    if not price_match:
+        price_match = re.search(r'(?:regular|price)[^\d]*(\d{3}(?:\.\d)?)', text, re.IGNORECASE)
+    if not price_match:
+        price_match = re.search(r'(\d{3}\.\d)', text)
+    if price_match:
+        price = float(price_match.group(1))
 
-    for match in fuel_pattern.finditer(text):
-        fuel_name = match.group(1).lower()
-        price = float(match.group(2))
-        # Replace Unicode minus (U+2212) with standard hyphen for float()
-        change = float(match.group(3).replace(" ", "").replace("\u2212", "-"))
+    change_match = re.search(r'([+-]\s*\d+(?:\.\d+)?)\s*(?:cents?|¢|c/l)', text, re.IGNORECASE)
+    if not change_match:
+        change_match = re.search(r'(?:change|adjust)[^\d+-]*([+-]\s*\d+(?:\.\d+)?)', text, re.IGNORECASE)
+    if change_match:
+        change = float(change_match.group(1).replace(" ", ""))
 
-        if change > 0:
-            trend = "up"
-        elif change < 0:
-            trend = "down"
-        else:
-            trend = "stable"
+    if change is not None:
+        trend = "up" if change > 0 else ("down" if change < 0 else "stable")
+    else:
+        trend = "unknown"
 
-        result[fuel_name] = {
-            "price": price,
-            "unit": "cents/litre",
-            "currency": "CAD",
-            "change": change,
-            "trend": trend,
-            "date": date_str,
-            "fuel_type": fuel_name.capitalize(),
-            "source": "gaswizard.ca",
-            "scraped_at": scraped_at,
-        }
-
-    # If the new pattern didn't match, fall back to the old broad parsing
-    if "regular" not in result:
-        price = None
-        change = None
-
-        price_match = re.search(r'(\d{3}(?:\.\d)?)\s*[¢c]', text)
-        if not price_match:
-            price_match = re.search(r'(?:regular|price)[^\d]*(\d{3}(?:\.\d)?)', text, re.IGNORECASE)
-        if not price_match:
-            price_match = re.search(r'(\d{3}\.\d)', text)
-        if price_match:
-            price = float(price_match.group(1))
-
-        change_match = re.search(r'([+-]\s*\d+(?:\.\d+)?)\s*(?:cents?|¢|c/l)', text, re.IGNORECASE)
-        if not change_match:
-            change_match = re.search(r'(?:change|adjust)[^\d+-]*([+-]\s*\d+(?:\.\d+)?)', text, re.IGNORECASE)
-        if change_match:
-            change = float(change_match.group(1).replace(" ", ""))
-
-        if change is not None:
-            trend = "up" if change > 0 else ("down" if change < 0 else "stable")
-        else:
-            trend = "unknown"
-
-        result["regular"] = {
+    return {
+        "regular": {
             "price": price,
             "unit": "cents/litre",
             "currency": "CAD",
@@ -184,5 +253,4 @@ def _scrape_gas_wizard():
             "source": "gaswizard.ca",
             "scraped_at": scraped_at,
         }
-
-    return result
+    }

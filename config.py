@@ -17,6 +17,11 @@ MAX_MAP_STATIONS = int(os.getenv("MAX_MAP_STATIONS", "3"))
 
 CACHE_TTL_SECONDS = int(os.getenv("CACHE_TTL_SECONDS", "3600"))
 
+# Timezone for determining "tomorrow". Gas Wizard updates on Eastern time,
+# so users in other timezones may see a day-ahead prediction too early.
+# Set to your local timezone (e.g., "America/Toronto", "America/Vancouver").
+TIMEZONE = os.getenv("TIMEZONE", "America/Toronto")
+
 GAS_WIZARD_URL = "https://gaswizard.ca/gas-prices/toronto/"
 
 STATIONS_FILE = os.path.join(os.path.dirname(__file__), "data", "petro_canada_stations.json")
