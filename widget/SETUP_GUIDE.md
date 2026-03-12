@@ -47,7 +47,7 @@ Tap the **play button** on the Shortcut to send your location to the server for 
 
 ### Create the "PetroPal Toggle Fuel" Shortcut
 
-This Shortcut lets you tap the "Tomorrow (87):" label to toggle between **87 (Regular)** and **91 (Premium)**.
+This Shortcut lets you tap the fuel grade label to toggle between **87 (Regular)** and **91 (Premium)**.
 
 1. Open the **Shortcuts** app
 2. Create a new Shortcut called **"PetroPal Toggle Fuel"**
@@ -56,9 +56,12 @@ This Shortcut lets you tap the "Tomorrow (87):" label to toggle between **87 (Re
 | # | Action | Configuration |
 |---|--------|---------------|
 | 1 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/toggle-fuel` |
-| 2 | **Open App** | App: **Widgy** |
+| 2 | **Wait** | 1 second |
+| 3 | **Open App** | App: **Widgy** |
 
-Step 2 forces Widgy to reload, so the price updates immediately after toggling.
+Step 1 toggles the fuel preference on the server (the response includes the updated price).
+Step 2 gives the server a moment to commit the change.
+Step 3 opens Widgy which triggers a widget data refresh with the new fuel type.
 
 ---
 
@@ -182,7 +185,7 @@ This button shows "87" or "91" and toggles between Regular and Premium octane wh
 
 ### Fuel Grade Label
 1. Tap **"+"** > select **Text**
-2. Position: x=306, y=134, width=24, height=18
+2. Position: x=300, y=134, width=24, height=18
 3. Font: SF Pro Mono, **Bold**, size 12
 4. Color: **#FF9500** (orange)
 5. Text alignment: Center
@@ -190,8 +193,10 @@ This button shows "87" or "91" and toggles between Regular and Premium octane wh
 
 ### Fuel Toggle Tap Action
 1. Tap **"+"** > select **Tap Action**
-2. Position over the fuel grade label: x=300, y=128, width=36, height=26
+2. Position over the fuel grade label: x=294, y=128, width=36, height=26
 3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Fuel"**
+
+**Important:** Make sure this does NOT overlap with the refresh button tap area (which starts at x=332). Leave a gap between them.
 
 Tapping "87" switches to "91" (Premium) and the c/L price updates accordingly.
 
@@ -204,13 +209,15 @@ Widgy tap actions are **separate layers** -- they are invisible rectangles you p
 ### Refresh Icon (visual only)
 1. Tap **"+"** > select **Symbol**
 2. SF Symbol: `arrow.clockwise.circle.fill`
-3. Position: x=336, y=134, width=22, height=22
+3. Position: x=338, y=134, width=22, height=22
 4. Tint color: **#48484A** (dark gray)
 
 ### Refresh Tap Action (the actual button)
 1. Tap **"+"** > select **Tap Action**
-2. Position it over the refresh icon: x=330, y=128, width=34, height=34
+2. Position it over the refresh icon: x=332, y=128, width=32, height=34
 3. Set the action to: **External Action > Run Shortcut > "PetroPal Refresh"**
+
+**Important:** This must NOT overlap with the fuel toggle tap area (which ends at x=330).
 
 This lets you tap the refresh icon to update your GPS and data on demand.
 

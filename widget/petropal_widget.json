@@ -114,7 +114,7 @@
       "type": "text",
       "name": "Fuel Grade",
       "_comment": "Shows '87' or '91'. Tap to toggle between Regular and Premium.",
-      "position": {"x": 306, "y": 134, "width": 24, "height": 18},
+      "position": {"x": 300, "y": 134, "width": 24, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.fuel_label"
@@ -130,8 +130,8 @@
     {
       "type": "tap_action",
       "name": "Fuel Toggle Tap Area",
-      "_comment": "In Widgy: Tap Action over the fuel grade label. Runs 'PetroPal Toggle Fuel' Shortcut.",
-      "position": {"x": 300, "y": 128, "width": 36, "height": 26},
+      "_comment": "In Widgy: Tap Action over the fuel grade label. NO overlap with refresh area.",
+      "position": {"x": 294, "y": 128, "width": 36, "height": 26},
       "action": {
         "type": "run_shortcut",
         "shortcut_name": "PetroPal Toggle Fuel"
@@ -141,7 +141,7 @@
       "type": "symbol",
       "name": "Refresh Icon",
       "_comment": "Visual only - the actual tap action is a separate Tap Action layer overlaid on this icon (see setup step 5)",
-      "position": {"x": 336, "y": 134, "width": 22, "height": 22},
+      "position": {"x": 338, "y": 134, "width": 22, "height": 22},
       "sf_symbol": "arrow.clockwise.circle.fill",
       "style": {
         "tint_color": "#48484A"
@@ -150,8 +150,8 @@
     {
       "type": "tap_action",
       "name": "Refresh Tap Area",
-      "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon, set action to 'Reload Widget'",
-      "position": {"x": 330, "y": 128, "width": 34, "height": 34},
+      "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon. Must NOT overlap fuel toggle.",
+      "position": {"x": 332, "y": 128, "width": 32, "height": 34},
       "action": "reload_widget"
     },
     {

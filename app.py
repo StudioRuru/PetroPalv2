@@ -326,14 +326,57 @@ def api_update_location():
     })
 
 
+def _build_gas_price_block(fuel):
+    """Build the gas_price dict used in widget-data responses."""
+    price_data = get_tomorrow_gas_price(fuel)
+    trend = price_data.get("trend", "unknown")
+    price = price_data.get("price")
+    change = price_data.get("change")
+    fuel_label = _FUEL_LABELS.get(fuel, "Regular")
+
+    display = f"{price} c/L" if price else "N/A"
+    if change is not None:
+        sign = "+" if change > 0 else ""
+        change_display = f"{sign}{change}c"
+    else:
+        change_display = "N/A"
+
+    date_raw = price_data.get("date")
+    if date_raw and isinstance(date_raw, str) and len(date_raw) > 5:
+        parts = date_raw.split()
+        date_short = " ".join(parts[-2:]) if len(parts) >= 2 else date_raw
+    else:
+        date_short = date_raw
+
+    change_red = change_display if trend == "up" else " "
+    change_green = change_display if trend == "down" else " "
+    change_gray = change_display if trend == "stable" else " "
+
+    return {
+        "price": str(price) if price else None,
+        "display": display,
+        "change": str(change) if change is not None else None,
+        "change_display": change_display,
+        "change_red": change_red,
+        "change_green": change_green,
+        "change_gray": change_gray,
+        "trend": trend,
+        "color": _trend_color(trend),
+        "date": date_short,
+        "fuel_type": fuel,
+        "fuel_label": fuel_label,
+    }
+
+
 @app.route("/api/toggle-fuel", methods=["GET", "POST"])
 def api_toggle_fuel():
     """Toggle or set fuel type preference for a device.
 
-    - No 'fuel' param: cycles regular → premium → diesel → regular
+    - No 'fuel' param: cycles regular → premium → regular
     - With 'fuel' param: sets to that specific type
 
-    The preference is used by /api/widget-data to return the matching price.
+    Returns the updated gas_price block so the Shortcut can use the
+    new price immediately without a separate widget-data fetch.
     """
     device_id = (
         request.args.get("device_id")
@@ -361,6 +404,7 @@ def api_toggle_fuel():
         "device_id": device_id,
         "fuel_type": new_fuel,
         "fuel_label": _FUEL_LABELS[new_fuel],
+        "gas_price": _build_gas_price_block(new_fuel),
     })
 
 
@@ -575,52 +619,12 @@ def api_widget_data():
 
     # Gas price
     fuel = _resolve_fuel_type()
-    price_data = get_tomorrow_gas_price(fuel)
-    trend = price_data.get("trend", "unknown")
-    price = price_data.get("price")
-    change = price_data.get("change")
-    fuel_label = _FUEL_LABELS.get(fuel, "Regular")
-
-    display = f"{price} c/L" if price else "N/A"
-    if change is not None:
-        sign = "+" if change > 0 else ""
-        change_display = f"{sign}{change}c"
-    else:
-        change_display = "N/A"
-
-    # Format date for display
-    date_raw = price_data.get("date")
-    if date_raw and isinstance(date_raw, str) and len(date_raw) > 5:
-        # Try to extract short date like "Mar 11"
-        parts = date_raw.split()
-        date_short = " ".join(parts[-2:]) if len(parts) >= 2 else date_raw
-    else:
-        date_short = date_raw
-
-    # Color-split fields: only the active trend gets text, others are empty.
-    # This lets Widgy stack 3 text layers (red/green/gray) with static colors.
-    # Use a space (not empty string) for inactive fields — Widgy renders "" as a dash.
-    change_red = change_display if trend == "up" else " "
-    change_green = change_display if trend == "down" else " "
-    change_gray = change_display if trend == "stable" else " "
+    gas_price = _build_gas_price_block(fuel)
 
     return jsonify(
         {
             "map_url": map_url,
-            "gas_price": {
-                "price": str(price) if price else None,
-                "display": display,
-                "change": str(change) if change is not None else None,
-                "change_display": change_display,
-                "change_red": change_red,
-                "change_green": change_green,
-                "change_gray": change_gray,
-                "trend": trend,
-                "color": _trend_color(trend),
-                "date": date_short,
-                "fuel_type": fuel,
-                "fuel_label": fuel_label,
-            },
+            "gas_price": gas_price,
             "stations": {
                 "count": len(nearby),
                 "nearest": nearest_list[0]["display"] if nearest_list else None,
