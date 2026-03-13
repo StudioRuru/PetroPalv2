@@ -11,15 +11,22 @@ import config
 # Set a test API key so URL builder doesn't return None
 config.GOOGLE_MAPS_API_KEY = "TEST_KEY"
 
-from app import app, haversine, _get_nearby_stations, _build_static_map_url, _BRANDS, _BRAND_LABELS, _brand_preferences, _save_brand_preferences
+from app import (
+    app, haversine, _get_nearby_stations, _build_static_map_url,
+    _BRANDS, _BRAND_LABELS,
+    _brand_preferences, _save_brand_preferences,
+    _station_indices, _save_station_indices,
+)
 
 
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
-    # Reset brand preference so tests start from default (petro-canada)
+    # Reset preferences so tests start from defaults
     _brand_preferences.clear()
     _save_brand_preferences()
+    _station_indices.clear()
+    _save_station_indices()
     with app.test_client() as client:
         yield client
 
@@ -226,6 +233,47 @@ class TestBrandToggleEndpoint:
         data = resp.get_json()
         assert data["brand"] == "esso"
         assert data["brand_label"] == "Esso"
+
+
+class TestStationToggle:
+    def test_toggle_cycles_stations(self, client):
+        # Default is index 0, toggle to 1
+        resp = client.get("/api/toggle-station")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["station_index"] == 1
+
+        # Toggle to 2
+        resp = client.get("/api/toggle-station")
+        data = resp.get_json()
+        assert data["station_index"] == 2
+
+        # Toggle wraps back to 0
+        resp = client.get("/api/toggle-station")
+        data = resp.get_json()
+        assert data["station_index"] == 0
+
+    @patch("app.get_tomorrow_gas_price")
+    def test_widget_data_uses_station_index(self, mock_price, client):
+        mock_price.return_value = {
+            "price": 160.9, "unit": "cents/litre", "change": 2.0,
+            "trend": "up", "date": "Mar 11", "source": "gaswizard.ca",
+        }
+        # Get baseline (station 0)
+        resp = client.get("/api/widget-data?lat=43.6532&lng=-79.3832")
+        data0 = resp.get_json()
+        assert data0["stations"]["station_index"] == 0
+
+        # Toggle to station 1
+        client.get("/api/toggle-station")
+        resp = client.get("/api/widget-data?lat=43.6532&lng=-79.3832")
+        data1 = resp.get_json()
+        assert data1["stations"]["station_index"] == 1
+
+        # nearest and nav_url should reflect station 1
+        if len(data1["stations"]["top"]) > 1:
+            assert data1["stations"]["nearest"] == data1["stations"]["top"][1]["display"]
+            assert data1["stations"]["nav_url"] == data1["stations"]["top"][1]["nav_url"]
 
 
 class TestMultiBrandStations:

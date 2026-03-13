@@ -44,6 +44,7 @@ DEFAULT_BRAND = os.getenv("DEFAULT_BRAND", "petro-canada")
 DEVICE_LOCATIONS_FILE = os.path.join(_DATA_DIR, "device_locations.json")
 FUEL_PREFERENCES_FILE = os.path.join(_DATA_DIR, "fuel_preferences.json")
 BRAND_PREFERENCES_FILE = os.path.join(_DATA_DIR, "brand_preferences.json")
+STATION_INDEX_FILE = os.path.join(_DATA_DIR, "station_index.json")
 
 FLASK_DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 FLASK_PORT = int(os.getenv("FLASK_PORT", "5000"))

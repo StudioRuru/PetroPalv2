@@ -48,6 +48,27 @@ _BRAND_LABELS = {
 }
 
 
+# Station index per device: { device_id: 0 | 1 | 2 }
+# Persisted to disk so the selected station survives server restarts.
+_station_indices = {}
+
+
+def _load_station_indices():
+    """Load saved station indices from disk into memory."""
+    global _station_indices
+    try:
+        with open(config.STATION_INDEX_FILE, "r") as f:
+            _station_indices = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        _station_indices = {}
+
+
+def _save_station_indices():
+    """Persist station indices to disk."""
+    with open(config.STATION_INDEX_FILE, "w") as f:
+        json.dump(_station_indices, f, indent=2)
+
+
 def _load_fuel_preferences():
     """Load saved fuel preferences from disk into memory."""
     global _fuel_preferences
@@ -100,6 +121,7 @@ def _save_device_locations():
 _load_device_locations()
 _load_fuel_preferences()
 _load_brand_preferences()
+_load_station_indices()
 
 # Clear gas price cache on startup so we always scrape fresh after deploy.
 # This ensures code changes (e.g., regex fixes) take effect immediately.
@@ -582,6 +604,33 @@ def api_brand():
     })
 
 
+@app.route("/api/toggle-station", methods=["GET", "POST"])
+def api_toggle_station():
+    """Cycle to the next nearest station for a device.
+
+    Cycles 0 -> 1 -> 2 -> 0 (wraps based on available stations).
+    """
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or (request.get_json(silent=True) or {}).get("device_id")
+        or "default"
+    )
+
+    current = _station_indices.get(device_id, 0)
+    max_idx = config.MAX_MAP_STATIONS - 1
+    new_idx = (current + 1) % (max_idx + 1)
+
+    _station_indices[device_id] = new_idx
+    _save_station_indices()
+
+    return jsonify({
+        "status": "ok",
+        "device_id": device_id,
+        "station_index": new_idx,
+    })
+
+
 @app.route("/")
 def index():
     return jsonify({"status": "ok", "app": "PetroPal"})
@@ -877,6 +926,21 @@ def _compute_widget_data():
             "nav_url": None,
         }
 
+    # Resolve which station is currently selected
+    device_id = (
+        request.args.get("device_id")
+        or request.args.get("device")
+        or "default"
+    )
+    _load_station_indices()
+    si = _station_indices.get(device_id, 0)
+    # Clamp to available stations
+    if nearest_list:
+        si = si % len(nearest_list)
+    else:
+        si = 0
+    selected = nearest_list[si] if nearest_list else None
+
     # Gas price
     fuel = _resolve_fuel_type()
     gas_price = _build_gas_price_block(fuel)
@@ -890,11 +954,12 @@ def _compute_widget_data():
         },
         "stations": {
             "count": len(nearby),
-            "nearest": nearest_list[0]["display"] if nearest_list else None,
+            "nearest": selected["display"] if selected else None,
+            "station_index": si,
             "station_1": nearest_list[0]["display"] if len(nearest_list) > 0 else " ",
             "station_2": nearest_list[1]["display"] if len(nearest_list) > 1 else " ",
             "station_3": nearest_list[2]["display"] if len(nearest_list) > 2 else " ",
-            "nav_url": nearest_list[0]["nav_url"] if nearest_list else None,
+            "nav_url": selected["nav_url"] if selected else None,
             "top": nearest_list,
         },
         "cheapest": cheapest_info,
