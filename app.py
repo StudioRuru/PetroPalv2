@@ -46,11 +46,6 @@ _BRAND_LABELS = {
     "esso": "Esso",
     "shell": "Shell",
 }
-_BRAND_SHORT = {
-    "petro-canada": "PC",
-    "esso": "Esso",
-    "shell": "Shell",
-}
 
 
 # Station index per device: { device_id: 0 | 1 | 2 }
@@ -956,7 +951,6 @@ def _compute_widget_data():
         "brand": {
             "key": brand,
             "label": brand_label,
-            "short": _BRAND_SHORT.get(brand, brand_label),
         },
         "stations": {
             "count": len(nearby),

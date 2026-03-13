@@ -63,24 +63,6 @@ Step 1 toggles the fuel preference on the server (the response includes the upda
 Step 2 gives the server a moment to commit the change.
 Step 3 opens Widgy which triggers a widget data refresh with the new fuel type.
 
-### Create the "PetroPal Toggle Brand" Shortcut
-
-This Shortcut lets you tap the brand badge to cycle through **Petro-Canada → Esso → Shell** independently from the octane toggle.
-
-1. Open the **Shortcuts** app
-2. Create a new Shortcut called **"PetroPal Toggle Brand"**
-3. Add these actions in order:
-
-| # | Action | Configuration |
-|---|--------|---------------|
-| 1 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/toggle-brand` |
-| 2 | **Wait** | 1 second |
-| 3 | **Open App** | App: **Widgy** |
-
-Step 1 cycles to the next brand on the server.
-Step 2 gives the server a moment to commit the change.
-Step 3 opens Widgy which triggers a widget data refresh with the new brand's stations.
-
 ---
 
 ## Step 1: Create the Widget
@@ -136,37 +118,20 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 6. Tap **"RUN"** -- Widgy fetches the JSON and shows all available fields
 7. Select the field listed for each layer below
 
-### Brand Badge (tappable — cycles Petro-Canada / Esso / Shell)
-1. Tap **"+"** > select **Text**
-2. Position: x=8, y=134, width=36, height=16
-3. Font: SF Pro, **Bold**, size 10
-4. Text color: **#FFFFFF** (white)
-5. Text alignment: Center
-6. Background color: **#48484A** (dark gray badge)
-7. Corner radius: **4**
-8. Endpoint field: **`brand.short`** (shows "PC", "Esso", or "Shell")
-
-### Brand Toggle Tap Action
-1. Tap **"+"** > select **Tap Action**
-2. Position over the brand badge: x=4, y=128, width=44, height=26
-3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Brand"**
-
-**Important:** This must NOT overlap with the map tap area above it.
-
 ### Gas Icon (SF Symbol, not a text layer)
 - Tap **"+"** > select **Symbol**
 - SF Symbol: `fuelpump.fill`
-- Position: x=48, y=134, width=16, height=16
+- Position: x=8, y=134, width=16, height=16
 - Tint color: **#FF9500** (orange)
 
 ### "Tomorrow:" Label (static text, no data source needed)
-- Position: x=68, y=132, width=70, height=18
+- Position: x=28, y=132, width=70, height=18
 - Text: `Tomorrow:`
 - Font: SF Pro, Regular, size 11
 - Color: **#8E8E93** (gray)
 
 ### Gas Price
-- Position: x=136, y=132, width=80, height=18
+- Position: x=96, y=132, width=80, height=18
 - Font: SF Pro, **Bold**, size 13
 - Color: **#FFFFFF** (white)
 - Endpoint field: **`gas_price.display`** (shows "152.9 c/L")
@@ -176,19 +141,19 @@ For each text layer below, use Widgy's built-in **Endpoint** data source (not Ja
 Create **three text layers** at the **same position**. Only one will have text at a time; the others will be empty. This gives you dynamic color without JavaScript.
 
 **Layer A — Price Up (red)**
-- Position: x=216, y=132, width=50, height=18
+- Position: x=176, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#FF3B30** (red)
 - Endpoint field: **`gas_price.change_red`** (shows "+2.0c" only when price goes up)
 
 **Layer B — Price Down (green)**
-- Position: x=216, y=132, width=50, height=18
+- Position: x=176, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#34C759** (green)
 - Endpoint field: **`gas_price.change_green`** (shows "-8.0c" only when price goes down)
 
 **Layer C — Stable (gray)**
-- Position: x=216, y=132, width=50, height=18
+- Position: x=176, y=132, width=50, height=18
 - Font: SF Pro Mono, Semibold, size 12
 - Color: **#8E8E93** (gray)
 - Endpoint field: **`gas_price.change_gray`** (shows "0.0c" only when price is stable)

@@ -40,8 +40,6 @@
 //   gas_price.trend          → "down"
 //   gas_price.color          → "#34C759"
 //   gas_price.date           → "12, 2026"
-//   brand.short              → "PC" (or "Esso", "Shell")
-//   brand.label              → "Petro-Canada" (or "Esso", "Shell")
 //   stations.nearest         → "Petro-Canada - Hwy 7 & Warden (3.3 km)"
 //   stations.count           → 10
 //   stations.nav_url         → "https://www.google.com/maps/dir/..."

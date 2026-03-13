@@ -26,38 +26,9 @@
       }
     },
     {
-      "type": "text",
-      "name": "Brand Label",
-      "_comment": "Shows 'PC', 'Esso', or 'Shell'. Tap to toggle brand independently from octane.",
-      "position": {"x": 8, "y": 134, "width": 36, "height": 16},
-      "data_source": {
-        "type": "endpoint",
-        "field": "brand.short"
-      },
-      "style": {
-        "font": "SF Pro",
-        "font_weight": "bold",
-        "font_size": 10,
-        "text_color": "#FFFFFF",
-        "text_alignment": "center",
-        "background_color": "#48484A",
-        "corner_radius": 4
-      }
-    },
-    {
-      "type": "tap_action",
-      "name": "Brand Toggle Tap Area",
-      "_comment": "In Widgy: Tap Action over the brand label. Runs 'PetroPal Toggle Brand' shortcut.",
-      "position": {"x": 4, "y": 128, "width": 44, "height": 26},
-      "action": {
-        "type": "run_shortcut",
-        "shortcut_name": "PetroPal Toggle Brand"
-      }
-    },
-    {
       "type": "symbol",
       "name": "Gas Icon",
-      "position": {"x": 48, "y": 134, "width": 16, "height": 16},
+      "position": {"x": 8, "y": 134, "width": 16, "height": 16},
       "sf_symbol": "fuelpump.fill",
       "style": {
         "tint_color": "#FF9500"
@@ -66,7 +37,7 @@
     {
       "type": "text",
       "name": "Tomorrow Label",
-      "position": {"x": 68, "y": 132, "width": 70, "height": 18},
+      "position": {"x": 28, "y": 132, "width": 70, "height": 18},
       "text": "Tomorrow:",
       "style": {
         "font": "SF Pro",
@@ -79,7 +50,7 @@
       "type": "text",
       "name": "Gas Price",
       "_comment": "Use Endpoint data source, field: gas_price.display",
-      "position": {"x": 136, "y": 132, "width": 80, "height": 18},
+      "position": {"x": 96, "y": 132, "width": 80, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.display"
@@ -95,7 +66,7 @@
       "type": "text",
       "name": "Price Change (Red - Up)",
       "_comment": "Shows change only when price is going UP. Stack all 3 change layers at same position.",
-      "position": {"x": 216, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_red"
@@ -111,7 +82,7 @@
       "type": "text",
       "name": "Price Change (Green - Down)",
       "_comment": "Shows change only when price is going DOWN.",
-      "position": {"x": 216, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_green"
@@ -127,7 +98,7 @@
       "type": "text",
       "name": "Price Change (Gray - Stable)",
       "_comment": "Shows change only when price is STABLE.",
-      "position": {"x": 216, "y": 132, "width": 50, "height": 18},
+      "position": {"x": 176, "y": 132, "width": 50, "height": 18},
       "data_source": {
         "type": "endpoint",
         "field": "gas_price.change_gray"
