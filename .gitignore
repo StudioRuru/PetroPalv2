@@ -29,6 +29,7 @@ Thumbs.db
 
 # Runtime data
 data/device_locations.json
+data/station_index.json
 
 # Testing
 .pytest_cache/
