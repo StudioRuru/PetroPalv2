@@ -63,6 +63,24 @@ Step 1 toggles the fuel preference on the server (the response includes the upda
 Step 2 gives the server a moment to commit the change.
 Step 3 opens Widgy which triggers a widget data refresh with the new fuel type.
 
+### Create the "PetroPal Toggle Brand" Shortcut
+
+This Shortcut lets you tap the brand badge to cycle through **Petro-Canada → Esso → Shell** independently from the octane toggle.
+
+1. Open the **Shortcuts** app
+2. Create a new Shortcut called **"PetroPal Toggle Brand"**
+3. Add these actions in order:
+
+| # | Action | Configuration |
+|---|--------|---------------|
+| 1 | **Get Contents of URL** | URL: `YOUR_SERVER_URL/api/toggle-brand` |
+| 2 | **Wait** | 1 second |
+| 3 | **Open App** | App: **Widgy** |
+
+Step 1 cycles to the next brand on the server.
+Step 2 gives the server a moment to commit the change.
+Step 3 opens Widgy which triggers a widget data refresh with the new brand's stations.
+
 ---
 
 ## Step 1: Create the Widget
@@ -176,6 +194,23 @@ Create **three text layers** at the **same position**. Only one will have text a
 - Color: **#8E8E93**
 - Text alignment: Right
 - Endpoint field: **`stations.count`** (shows "10")
+
+### Brand Badge (tappable — cycles Petro-Canada / Esso / Shell)
+1. Tap **"+"** > select **Text**
+2. Position: x=322, y=150, width=36, height=16
+3. Font: SF Pro, **Bold**, size 10
+4. Text color: **#FFFFFF** (white)
+5. Text alignment: Center
+6. Background color: **#48484A** (dark gray badge)
+7. Corner radius: **4**
+8. Endpoint field: **`brand.short`** (shows "PC", "Esso", or "Shell")
+
+### Brand Toggle Tap Action
+1. Tap **"+"** > select **Tap Action**
+2. Position over the brand badge: x=318, y=144, width=44, height=26
+3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Brand"**
+
+Tapping the badge cycles the brand. The map, stations, and nav URL all update to the new brand on the next widget refresh.
 
 ---
 

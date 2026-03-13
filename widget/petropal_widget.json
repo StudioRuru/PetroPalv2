@@ -198,6 +198,35 @@
       }
     },
     {
+      "type": "text",
+      "name": "Brand Label",
+      "_comment": "Shows 'PC', 'Esso', or 'Shell'. Tap to cycle brand independently from octane.",
+      "position": {"x": 322, "y": 150, "width": 36, "height": 16},
+      "data_source": {
+        "type": "endpoint",
+        "field": "brand.short"
+      },
+      "style": {
+        "font": "SF Pro",
+        "font_weight": "bold",
+        "font_size": 10,
+        "text_color": "#FFFFFF",
+        "text_alignment": "center",
+        "background_color": "#48484A",
+        "corner_radius": 4
+      }
+    },
+    {
+      "type": "tap_action",
+      "name": "Brand Toggle Tap Area",
+      "_comment": "In Widgy: Tap Action over the brand label. Runs 'PetroPal Toggle Brand' shortcut.",
+      "position": {"x": 318, "y": 144, "width": 44, "height": 26},
+      "action": {
+        "type": "run_shortcut",
+        "shortcut_name": "PetroPal Toggle Brand"
+      }
+    },
+    {
       "type": "tap_action",
       "name": "Map Tap Area",
       "_comment": "In Widgy: add a Tap Action layer, position it over the map, set action to 'External Action > Open URL'",
