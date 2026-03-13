@@ -130,8 +130,8 @@
     {
       "type": "tap_action",
       "name": "Fuel Toggle Tap Area",
-      "_comment": "In Widgy: Tap Action over the fuel grade label. NO overlap with refresh area.",
-      "position": {"x": 294, "y": 128, "width": 36, "height": 26},
+      "_comment": "In Widgy: Tap Action over the fuel grade label. Must NOT overlap brand toggle (below) or refresh (right).",
+      "position": {"x": 294, "y": 128, "width": 36, "height": 20},
       "action": {
         "type": "run_shortcut",
         "shortcut_name": "PetroPal Toggle Fuel"
@@ -150,8 +150,8 @@
     {
       "type": "tap_action",
       "name": "Refresh Tap Area",
-      "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon. Must NOT overlap fuel toggle.",
-      "position": {"x": 332, "y": 128, "width": 32, "height": 34},
+      "_comment": "In Widgy: add a Tap Action layer, position it over the refresh icon. Must NOT overlap fuel toggle or brand toggle.",
+      "position": {"x": 332, "y": 128, "width": 32, "height": 20},
       "action": "reload_widget"
     },
     {
@@ -219,8 +219,8 @@
     {
       "type": "tap_action",
       "name": "Brand Toggle Tap Area",
-      "_comment": "In Widgy: Tap Action over the brand label. Runs 'PetroPal Toggle Brand' shortcut.",
-      "position": {"x": 318, "y": 144, "width": 44, "height": 26},
+      "_comment": "In Widgy: Tap Action over the brand label. Starts at y=148 so it does NOT overlap fuel/refresh above.",
+      "position": {"x": 316, "y": 148, "width": 48, "height": 22},
       "action": {
         "type": "run_shortcut",
         "shortcut_name": "PetroPal Toggle Brand"

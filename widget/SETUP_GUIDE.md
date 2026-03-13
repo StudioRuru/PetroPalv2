@@ -207,7 +207,7 @@ Create **three text layers** at the **same position**. Only one will have text a
 
 ### Brand Toggle Tap Action
 1. Tap **"+"** > select **Tap Action**
-2. Position over the brand badge: x=318, y=144, width=44, height=26
+2. Position over the brand badge: x=316, y=148, width=48, height=22
 3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Brand"**
 
 Tapping the badge cycles the brand. The map, stations, and nav URL all update to the new brand on the next widget refresh.
@@ -228,10 +228,10 @@ This button shows "87" or "91" and toggles between Regular and Premium octane wh
 
 ### Fuel Toggle Tap Action
 1. Tap **"+"** > select **Tap Action**
-2. Position over the fuel grade label: x=294, y=128, width=36, height=26
+2. Position over the fuel grade label: x=294, y=128, width=36, height=20
 3. Set action to: **External Action > Run Shortcut > "PetroPal Toggle Fuel"**
 
-**Important:** Make sure this does NOT overlap with the refresh button tap area (which starts at x=332). Leave a gap between them.
+**Important:** Make sure this does NOT overlap with the refresh button (right) or the brand toggle (below). The fuel tap area ends at y=148; the brand tap area starts at y=148.
 
 Tapping "87" switches to "91" (Premium) and the c/L price updates accordingly.
 
@@ -249,10 +249,10 @@ Widgy tap actions are **separate layers** -- they are invisible rectangles you p
 
 ### Refresh Tap Action (the actual button)
 1. Tap **"+"** > select **Tap Action**
-2. Position it over the refresh icon: x=332, y=128, width=32, height=34
+2. Position it over the refresh icon: x=332, y=128, width=32, height=20
 3. Set the action to: **External Action > Run Shortcut > "PetroPal Refresh"**
 
-**Important:** This must NOT overlap with the fuel toggle tap area (which ends at x=330).
+**Important:** This must NOT overlap with the fuel toggle (left) or brand toggle (below). Ends at y=148 where brand toggle begins.
 
 This lets you tap the refresh icon to update your GPS and data on demand.
 
