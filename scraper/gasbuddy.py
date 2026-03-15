@@ -139,7 +139,7 @@ def _parse_day_blocks(text):
     fuel_pattern = re.compile(
         r'(Regular|Premium|Diesel)\s*'
         r'(\d{3}(?:\.\d)?)\s*'
-        r'\(\s*([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?\s*\)',
+        r'\(\s*(?:([+\-\u2212]\s*\d+(?:\.\d+)?)\s*[¢c]?|n/c)\s*\)',
         re.IGNORECASE,
     )
 
@@ -159,7 +159,8 @@ def _parse_day_blocks(text):
         for match in fuel_pattern.finditer(block_text):
             fuel_name = match.group(1).lower()
             price = float(match.group(2))
-            change = float(match.group(3).replace(" ", "").replace("\u2212", "-"))
+            raw_change = match.group(3)
+            change = float(raw_change.replace(" ", "").replace("\u2212", "-")) if raw_change else 0.0
 
             if change > 0:
                 trend = "up"
